@@ -60,7 +60,7 @@ echo Done! The virtual environment "venv" is now active.
 echo Installed packages from requirements.txt
 echo =====================================================
 echo.
-echo READ THIS ME! :)
+echo READ THIS! :)
 echo 1. YOU, the user must run the following command:
 echo    venv\Scripts\activate
 echo    It will activate the venv for you to start working.

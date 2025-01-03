@@ -12,6 +12,7 @@ Follow the steps below to set up the project after pulling the repository:
      1. Creates a virtual environment named `venv/`.
      2. Downloads and installs **Python 3.12** within `venv/`.
      3. Installs all required libraries listed in `requirements.txt`.
+     This may take a while, please be patient. it may seem as if your IDE's terminal is frozen, don't worry, wait and just let it do it's thing :)
 
 3. **Activate the Virtual Environment**
    - Execute the following command:
