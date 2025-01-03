@@ -21,3 +21,33 @@ Follow the steps below to set up the project after pulling the repository:
 ---
 
 Feel free to reach out for further assistance
+
+
+## File Architecture
+
+   .
+   ├── Code/                              # Directory containing all Python code files
+   |   |
+   │   ├── class/                           # Directory for class definitions
+   │   │   ├── BionicHand.py                    # Class for controlling the bionic hand
+   │   │   ├── HandDetection.py                 # Class for hand gesture detection
+   │   │   ├── LLMagent.py                      # Class for interacting with a Large Language Model (LLM)
+   │   │   └── Game.py                          # Class for game logic and management
+   |   |   
+   │   ├── models/                          # Directory for trained machine learning models
+   |   |   |
+   │   │   ├── Hand-Gesture-Detection/         # Directory for hand gesture detection model
+   |   |   |   ├── Gesture-detection-model.py      # Neural Network Model for hand gesture detection
+   │   │   │   ├── parameters.pth                  # Configuration parameters for the hand gesture detection model
+   │   │   |   └── Train-gesture-detection.py      # Script to train the hand gesture detection model
+   |   |   |
+   │   │   └── hand-recognition/               # Directory for hand recognition models
+   │   │       ├── Hand-recognition-model.py       # Neural Network Model for hand recognition
+   │   │       ├── parameters.pth                  # Configuration parameters for the hand recognition model
+   │   │       └── Train-hand-recognition.py       # Script to train the hand recognition model
+   |   |
+   │   └── utils/                           # Directory for utility functions and helper scripts
+   │   |   ├── Environment-fetching.py         # Functions for fetching environment information
+   │   |   └── LLM-auxiliary-functions.py      # LLM-related utility functions
+   |   |
+   │   └── main.py                          # Main entry point of the application
