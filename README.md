@@ -24,26 +24,31 @@ Feel free to reach out for further assistance
 
 
 ## File Architecture
-<br/>.<br/>
-├── Code/                        # Directory containing all Python code files<br/>
-│   ├── class/                   # Directory for class definitions<br/>
-│   │   ├── BionicHand.py        # Class for controlling the bionic hand<br/>
-│   │   ├── HandDetection.py     # Class for hand gesture detection<br/>
-│   │   ├── LLMAgent.py          # Class for interacting with a Large Language Model (LLM)<br/>
-│   │   └── Game.py              # Class for game logic and management<br/>
-│<br/>
-├── models/                      # Directory for trained machine learning models<br/>
-│   ├── Hand-Gesture-Detection/  # Directory for hand gesture detection model<br/>
-│   │   ├── Gesture-detection-model.py  # Neural Network Model for hand gesture detection<br/>
-│   │   ├── parameters.pth              # Configuration parameters for the hand gesture detection model<br/>
-│   │   └── Train-gesture-detection.py  # Script to train the hand gesture detection model<br/>
-│   ├── hand-recognition/        # Directory for hand recognition models<br/>
-│   │   ├── Hand-recognition-model.py   # Neural Network Model for hand recognition<br/>
-│   │   ├── parameters.pth               # Configuration parameters for the hand recognition model<br/>
-│   │   └── Train-hand-recognition.py    # Script to train the hand recognition model<br/>
-│<br/>
-├── utils/                       # Directory for utility functions and helper scripts<br/>
-│   ├── Environment-fetching.py  # Functions for fetching environment information<br/>
-│   └── LLM-auxiliary-functions.py # LLM-related utility functions<br/>
-│<br/>
-└── main.py                      # Main entry point of the application<br/>
+```
+   .
+   ├── Code/                              # Directory containing all Python code files
+   |   |
+   │   ├── class/                           # Directory for class definitions
+   │   │   ├── BionicHand.py                    # Class for controlling the bionic hand
+   │   │   ├── HandDetection.py                 # Class for hand gesture detection
+   │   │   ├── LLMagent.py                      # Class for interacting with a Large Language Model (LLM)
+   │   │   └── Game.py                          # Class for game logic and management
+   |   |
+   │   ├── models/                          # Directory for trained machine learning models
+   |   |   |
+   │   │   ├── Hand-Gesture-Detection/         # Directory for hand gesture detection model
+   |   |   |   ├── Gesture-detection-model.py      # Neural Network Model for hand gesture detection
+   │   │   │   ├── parameters.pth                  # Configuration parameters for the hand gesture detection model
+   │   │   |   └── Train-gesture-detection.py      # Script to train the hand gesture detection model
+   |   |   |
+   │   │   └── hand-recognition/               # Directory for hand recognition models
+   │   │       ├── Hand-recognition-model.py       # Neural Network Model for hand recognition
+   │   │       ├── parameters.pth                  # Configuration parameters for the hand recognition model
+   │   │       └── Train-hand-recognition.py       # Script to train the hand recognition model
+   |   |
+   │   └── utils/                           # Directory for utility functions and helper scripts
+   │   |   ├── Environment-fetching.py         # Functions for fetching environment information
+   │   |   └── LLM-auxiliary-functions.py      # LLM-related utility functions
+   |   |
+   │   └── main.py                          # Main entry point of the application
+```
