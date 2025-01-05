@@ -52,6 +52,7 @@ echo ---------------------------------------------------------
 echo 4. Install the requirements
 echo ---------------------------------------------------------
 python.exe -m pip install --upgrade pip
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 pip install -r requirements.txt
 
 echo.
