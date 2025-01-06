@@ -58,3 +58,20 @@ REPOSITORY/
 │   |   └── LLM-auxiliary-functions.py      # LLM-related utility functions
 |   |
 │   └── main.py                          # Main entry point of the application
+```
+
+---
+
+### Hardware Structure
+
+***Components used:***
+  - Raspberry Pi 4b
+  - PCA9685 Servo Controler
+  - Sg90 Servo * 5
+  - 6v Battery holder
+  - Portable charger
+  - USB Camera
+  - USB Microphone
+  - Bluetooth speaker
+
+![screenshot](./Hardware/design-photo.png)
