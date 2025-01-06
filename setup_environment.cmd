@@ -66,6 +66,11 @@ echo 1. YOU, the user must run the following command:
 echo    venv\Scripts\activate
 echo    It will activate the venv for you to start working.
 echo.
-echo 2. Go over the terminal and make sure there aren't any errors, if there are any
+echo 2. Select this venv's python interpreter:
+echo    1) Ctrl + Shift + P
+echo    2) Type in "Python: Select Interpreter" and press Enter
+echo    3) Select the python version corresponding to ('venv')
+echo.
+echo 3. Go over the terminal and make sure there aren't any errors, if there are any
 echo    notify Yuri so he can resolve those issues! Don't keep it to yourself.
 echo.

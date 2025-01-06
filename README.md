@@ -18,6 +18,12 @@ Follow the steps below to set up the project after pulling the repository:
    - Execute the following command:
      venv\Scripts\activate
 
+4. **Select the correct Python interpreter(Instructions for VScode)**
+   - Follow these steps while inside VScode, If using a different IDE figure it out on your own :)
+     1. Ctrl + Shift + P
+     2. Type in "Python: Select Interpreter" and press Enter
+     3. Select the python version corresponding to ('venv')
+
 ---
 
 Feel free to reach out for further assistance
