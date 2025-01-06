@@ -62,7 +62,7 @@ REPOSITORY/
 
 ---
 
-### Hardware Structure
+## Hardware Structure
 
 ***Components used:***
   - Raspberry Pi 4b
