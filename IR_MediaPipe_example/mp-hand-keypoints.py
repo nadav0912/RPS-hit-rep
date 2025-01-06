@@ -8,9 +8,12 @@ import json
 #   General Setup                                                                       
 ###########################################################################################
 data_dir = 'data'
-runs_dir = 'runs'
+runs_dir = 'result'
 input = 'hand1.jpg'                 # Change depending on your image
 hand_keypoints = []
+
+if not os.path.exists(runs_dir):
+    os.makedirs(runs_dir)
 
 # Make output names
 name, ext = os.path.splitext(input)
