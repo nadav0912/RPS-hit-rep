@@ -6,6 +6,7 @@ Follow the steps below to set up the project after pulling the repository:
 1. **Open Your IDE with Admin Privileges**
    - Use **VS Code** or any other IDE.
    - Ensure it is launched with administrator rights for proper setup(Neccecary for python install).
+   - Make sure you're in the main folder of the project
 
 2. **Run the `setup_environment.cmd` File**
    - This script performs the following tasks:
