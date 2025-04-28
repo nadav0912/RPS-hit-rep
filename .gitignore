@@ -3,4 +3,5 @@ IR_YOLO11_example/datasets/
 IR_YOLO11_example/yolo11n-pose.pt
 IR_MediaPipe_example/result
 venv/
+myenv/
 python-3.12.0-amd64.exe
