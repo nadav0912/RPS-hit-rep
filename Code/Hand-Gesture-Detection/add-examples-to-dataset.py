@@ -5,16 +5,10 @@ import pandas as pd
 import sys
 import os
 
-
-# Add the 'utils' directory to sys.path , This allows importing modules from the 'utils' directory in the project
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'utils')))
-print(sys.path)
-
 from utils import hand_from_image, landmarks_to_list, add_example_to_dataset
 
 
 # ---------- initializations ---------- #
-
 # Labels dict
 key_label_dict =  {'r':"rock", 'p':"paper", 's':"scissors"}
 
@@ -34,15 +28,46 @@ label = None  # rock/paper/scissors
 hand_side = None  # right/left
 
 
-# list of maps = [{label: ,hand-side, x0:, y0, .....}]
-example_data = []  
+example_landmarks_data = []   # list of landmarks. each landmarks is list of 21 dots [[x, y, z], ...]
+example_images = []
+
+# Helper function to show example record images
+def show_record_example(example_images: list[list[int]], delay: float):
+    """
+    Displays the example images as a sequence with a delay between each frame.
+    Input:
+        example_images (list): A list containing all the frames to be displayed.
+        delay (int): The delay (in milliseconds) between displaying each frame.
+    """
+
+    print("\nShow example (press s to stop)...")
+    size = len(example_images)
+    count = 0
+    key = ''
+
+    while key != 's':
+        key = chr(cv2.waitKey(delay) & 0xFF)
+        count += 1
+        i = count%size
+
+        # pick image and add frame number to it
+        image = example_images[i]
+        cv2.putText(image, str(i), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (2, 57, 66), 3, lineType=cv2.LINE_AA)
+
+        cv2.imshow("example", example_images[count%size])
+
+
 
 
 # -------- Main Loop -------- #
 while cap.isOpened():
     success, image = cap.read()
 
-    hand, image = hand_from_image(success, image, hands)
+    hand, hand_side, image = hand_from_image(success, image, hands)
+
+    # Check if user press key
+    key_code = cv2.waitKey(5) & 0xFF
+    key = chr(key_code)
 
     # If found hand in image
     if hand: 
@@ -51,34 +76,38 @@ while cap.isOpened():
                                             mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=1, circle_radius=2),
                                             mp_drawing.DrawingSpec(color=(121, 44, 250), thickness=1, circle_radius=1))
 
-        # Check if user press key to add exapmle
-        key_code = cv2.waitKey(5) & 0xFF
-        key = chr(key_code)
+        # Add hand to example data if record mode is on
+        if record_mode:
+            example_landmarks_data.append(landmarks_to_list(hand.landmark))
+            example_images.append(image)
+            print("....")
 
+        # Check start/stop record example
         if key in key_label_dict.keys():
-            # Start record mode if he off, and get label and hand side
+            # Strat record
             if not record_mode:
                 record_mode = True
-                hand_side = hand.classification[0].label
+                hand_side = hand_side
                 label = key_label_dict[key]
 
                 print(f"Start record example of {key_label_dict[key]}...")
 
-            # Add landmarks to data
-            landmarks = landmarks_to_list(hand.landmark)
-            example_data.append(landmarks)
-            
+            # Stop record
+            else:
+                print("Stop record example!")
+                show_record_example(example_images, 170)
+                add_example_to_dataset(label, hand_side, example_landmarks_data)
 
-        # Rcorde mode is on and nothing is press
-        if key_code == 255 and record_mode:
-            print("Stop record example!")
+                record_mode = False
+                hand_side = None
+                label = None
+                example_landmarks_data.clear()
+                example_images.clear()
 
-            record_mode = True
-            hand_side = None
-            label = None
-
-            add_example_to_dataset(label, hand_side, example_data)
-
+    # Check exit
+    if key.lower() == 'q':
+        print("Stop runing...")
+        break
 
     # Show image
     cv2.imshow('Hand Tracking', image) 

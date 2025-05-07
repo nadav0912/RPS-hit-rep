@@ -13,6 +13,7 @@ def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.
         hands_model - A instance of the Hands landmarks model from mediapipe
     return: 
         hand - The hand that found in image. if not found so None
+        hand_side - string "right" or "left" if found hand in image. else it be None
         image - Same image from input, only change is flip on horizontal the image.
     """
 
@@ -25,13 +26,14 @@ def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.
     # Get predicted landmarks. 
     results = hands_model.process(image)
 
-    # If find hand in image save it in hand
+    # If find hand in image save hand and hand_side
     hand = None if not results.multi_hand_landmarks else results.multi_hand_landmarks[0]
+    hand_side = None if not results.multi_handedness else results.multi_handedness[0].classification[0].label
 
     image.flags.writeable = True
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # RGB -> BGR
 
-    return hand, image
+    return hand, hand_side, image
 
 
 def landmarks_to_list(landmarks) -> list[list[int]]:
@@ -43,7 +45,7 @@ def normalize_landmarks(landmarks: list[list[int]]) -> list[list[int]]:
     Get landmarks as list and return them ofter normalize all values inside.
     landmark format (input and output): [[x0, y0, z0], [x1, y1, z1], ...]
     """
-    landmarks = np.array(landmarks)
+    landmarks = np.array(landmarks, dtype=float)
 
     # Find min & max for x, y and z  
     x_coordinates, y_coordinates, z_coordinates= landmarks[:, 0], landmarks[:, 1], landmarks[:, 2]
