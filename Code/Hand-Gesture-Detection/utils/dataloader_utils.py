@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import pandas as pd
 import numpy as np
 
+
 label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
 
 
@@ -65,7 +66,8 @@ def collate_func(batch):
 
 if __name__ == "__main__":
     # Test the Dataset and DataLoader with collate_func
-    test_folder = os.path.join(os.path.dirname(__file__), 'test_folder')
+    test_folder = os.path.join(os.path.dirname(__file__), '..', 'data')
+    test_folder = os.path.abspath(test_folder)
 
     # Initialize the dataset
     dataset = handDataset()
