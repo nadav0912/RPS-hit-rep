@@ -12,8 +12,8 @@ label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
 # Dataset class, used for dataloader
 class handDataset(Dataset):
     def __init__(self):
-        self.dataset = []
-        self.labels = []
+        self.dataset = []  # list of tensors
+        self.labels = []  # list of int
     
     def __getitem__(self, index):
         return self.dataset[index], self.labels[index]
@@ -53,27 +53,6 @@ class handDataset(Dataset):
 # batch =   [(tensor, label),...] 
 #           tensor - (num_of_frames, 63)
 def collate_func(batch):
-    '''
-    max_length = 0
-    length_list = []
-    padded_batch = []
-
-    # finds longest example length
-    # creates true lengths list
-    for example in batch:
-        curr_length = example[0].shape[0]
-
-        length_list.append(length)
-        if curr_length > max_length:
-            max_length = example[0].shape[0]
-
-    # padding
-    for example in batch:
-        curr_length = example[0].shape[0]
-
-        if curr_length < max_length:
-            padding_size = max_length - curr_length
-    '''
     # makes two tuples
     tensors, labels = zip(*batch)
     labels = torch.tensor(labels, dtype=torch.long)
