@@ -42,12 +42,12 @@ def show_record_example(example_images: list[list[int]], delay: float):
 
     print("\nShow example (press s to stop)...")
     size = len(example_images)
-    count = 0
+    count = size
     key = ''
 
     while key != 's':
         key = chr(cv2.waitKey(delay) & 0xFF)
-        count += 1
+        count -= 1
         i = count%size
 
         # pick image and add frame number to it

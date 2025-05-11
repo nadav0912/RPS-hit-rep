@@ -5,9 +5,12 @@ from torch.utils.data import Dataset, DataLoader
 import torch.nn.functional as F
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
 
 label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
+
+test_folder = Path(__file__).resolve().parent.parent / 'data'
 
 
 # Dataset class, used for dataloader
@@ -15,7 +18,9 @@ class handDataset(Dataset):
     def __init__(self):
         self.dataset = []  # list of tensors
         self.labels = []  # list of int
-    
+
+        self.addToDataset(test_folder)
+
     def __getitem__(self, index):
         return self.dataset[index], self.labels[index]
     
@@ -37,7 +42,7 @@ class handDataset(Dataset):
 
         # df -> numpy -> tensor
         numpy_arr = df.to_numpy()   # size of (num_of_rows, 63)
-        tensor_dataframe = torch.tensor(numpy_arr)  # size of (num_of_rows, 63)
+        tensor_dataframe = torch.tensor(numpy_arr, dtype=torch.float32)  # size of (num_of_rows, 63)
 
         return tensor_dataframe, label
 
@@ -65,13 +70,8 @@ def collate_func(batch):
 
 
 if __name__ == "__main__":
-    # Test the Dataset and DataLoader with collate_func
-    test_folder = os.path.join(os.path.dirname(__file__), '..', 'data')
-    test_folder = os.path.abspath(test_folder)
-
     # Initialize the dataset
     dataset = handDataset()
-    dataset.addToDataset(test_folder)
 
     # Check if dataset is loaded correctly
     print(f"Total examples loaded: {len(dataset)}")
