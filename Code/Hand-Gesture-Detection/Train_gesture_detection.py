@@ -5,9 +5,13 @@ import numpy as np
 from torch.utils.data import DataLoader, Subset
 from torchmetrics.classification import Accuracy, ConfusionMatrix
 from tqdm.auto import tqdm 
-from sklearn.model_selection import train_test_split
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-from utils import handDataset, collate_func
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report
+
+from utils import handDataset, collate_func, confusion_matrix_heat_map, loss_and_acc_graghs, save_model
 from Gesture_detection_model import GRUModelV1
 
 
@@ -99,7 +103,7 @@ def train():
                 loss.backward()
                 optimizer.step()
 
-        return loss, acc
+        return loss.item(), acc
 
 
 def test():
@@ -112,14 +116,19 @@ def test():
                         loss = loss_fn(y_logits, labels)
                         acc = accuracy_fn(y_preds, labels)
 
-        return loss, acc
+        return loss.item(), acc
 
 
 
 # ---------- MAIN LOOP ---------- #
+loss_map = {"test_loss": [], "train_loss": [],"test_acc": [], "train_acc": []}
+
 for epoch in tqdm(range(EPOCHS)):
         train_loss, train_acc = train()
         test_loss, test_acc = test()
+
+        for key, val in zip(loss_map.keys(), [test_loss, train_loss, test_acc, train_acc]):
+               loss_map[key].append(val)
 
         if epoch % 10 == 0:
                 print(f"Epoch: {epoch} | Train loss: {train_loss:.5f} | Train acc: {train_acc:.2f}% | Test loss: {test_loss:.5f} | Test acc: {test_acc:.2f}%")
@@ -128,8 +137,37 @@ for epoch in tqdm(range(EPOCHS)):
 
 
 # -------- Final Results -------- #
-# Need to add data to the dataset
 
+# Get all test data in one tensor
+all_test_exampels = []
+all_test_labels = []
+
+for batch, labels in test_dataloader:
+    all_test_exampels.append(batch)
+    all_test_labels.append(labels)
+
+all_test_exampels = torch.cat(all_test_exampels, dim=0)
+all_test_labels = torch.cat(all_test_labels, dim=0)
+
+# Process all test data through the model
+model.eval()
+with torch.inference_mode():
+    y_logits = model(all_test_exampels)
+    y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
+
+
+report = classification_report(y_true=all_test_labels, y_pred=y_preds)
+print(report)
+
+confusion_matrix_heat_map(confmat_fn, y_preds, all_test_labels)
+
+loss_and_acc_graghs(loss_map, num_epochs=EPOCHS)
+
+plt.show()
 
 
 # -------- Saving Model -------- #
+model_name = input("Do you want save this (n->no):")
+
+if model_name != "n":
+       save_model(model, model_name)

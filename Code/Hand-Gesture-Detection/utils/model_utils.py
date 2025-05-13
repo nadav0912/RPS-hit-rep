@@ -1,6 +1,10 @@
 import numpy as np
 import mediapipe as mp
+import torch
 import cv2
+from pathlib import Path
+
+MODEL_PATH = Path(__file__).parent.parent / "models_state_dicts"
 
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):
@@ -72,3 +76,17 @@ def normalize_landmarks(landmarks: list[list[int]]) -> list[list[int]]:
     print("\n\n", landmarks)"""
 
     return landmarks.tolist()
+
+
+def save_model(model: torch.nn.Module, model_name: str):
+    MODEL_PATH.mkdir(parents=True, exist_ok=True) 
+    model_name += '.pth'
+    MODEL_SAVE_PATH = MODEL_PATH / model_name
+    print(f"Saving model to: {MODEL_SAVE_PATH}")
+    torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)  
+
+
+def load_model(model: torch.nn.Module, model_name: str):
+    model_name += '.pth'
+    MODEL_SAVE_PATH = MODEL_PATH / model_name
+    model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
