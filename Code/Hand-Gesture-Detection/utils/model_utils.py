@@ -6,6 +6,23 @@ from pathlib import Path
 
 MODEL_PATH = Path(__file__).parent.parent / "models_state_dicts"
 
+class LiveGRUWrapper:
+    def __init__(self, model):
+        self.model = model
+        self.h_n = None
+
+    def reset(self):
+        self.h_n = None
+
+    def step(self, row_tensor):
+        # row_tensor: (batch size: 1, sequence size: 1, input size: 63)
+        self.model.eval()
+        with torch.inference_mode():
+            output, self.h_n = self.model(row_tensor, self.h_n)
+
+        return output
+
+
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):
     """
@@ -26,6 +43,7 @@ def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.
 
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR -> RGB
     image = cv2.flip(image, 1)  # flip on horizontal
+    image.flags.writeable = False
 
     # Get predicted landmarks. 
     results = hands_model.process(image)
@@ -77,6 +95,24 @@ def normalize_landmarks(landmarks: list[list[int]]) -> list[list[int]]:
 
     return landmarks.tolist()
 
+
+def prepare_landmarks_to_model(landmarks) -> torch.tensor:
+    """
+    Converts MediaPipe hand landmarks (hand.landmark) to a tensor for live GRU model.
+    1. Converts landmarks to a list of normalized coordinates.
+    2. Converts the list to a tensor and reshapes it to (1, 1, 63).
+
+    Args: landmarks (list): List of MediaPipe NormalizedLandmark objects from `hand.landmark`.
+
+    Returns: torch.tensor: A tensor with shape (1, 1, 63) ready for model input.
+    """
+    lm = landmarks_to_list(landmarks)
+    normalized_lm = normalize_landmarks(lm)
+    tensor_lm = torch.tensor(normalized_lm, dtype=torch.float32).flatten()  # tensor with one dim in size 63 (given list in the format [[x, y, z], ...])
+    batch = tensor_lm.unsqueeze(dim=0).unsqueeze(dim=0)  # reshape the tensor from shape (63,) to (1, 1, 63)
+
+    return batch
+ 
 
 def save_model(model: torch.nn.Module, model_name: str):
     MODEL_PATH.mkdir(parents=True, exist_ok=True) 

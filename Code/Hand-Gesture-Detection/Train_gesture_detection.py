@@ -76,7 +76,7 @@ model = GRUModelV1(
         num_layers=NUM_LAYERS,
         num_classes=OUTPUT_SIZE,
         dropout_prob=0.3
-)
+).to(device)
 print("\nMODEL:\n", model)
 
 
@@ -95,7 +95,7 @@ def train():
         model.train()
 
         for batch, labels in train_dataloader:
-                y_logits = model(batch)
+                y_logits, _ = model(batch)
                 y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
 
                 loss = loss_fn(y_logits, labels)
@@ -112,7 +112,7 @@ def test():
         model.eval()
         with torch.inference_mode():
                 for batch, labels in test_dataloader:
-                        y_logits = model(batch)
+                        y_logits, _ = model(batch)
                         y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
                         
                         loss = loss_fn(y_logits, labels)
@@ -154,7 +154,7 @@ all_test_labels = torch.cat(all_test_labels, dim=0)
 # Process all test data through the model
 model.eval()
 with torch.inference_mode():
-    y_logits = model(all_test_exampels)
+    y_logits, _ = model(all_test_exampels)
     y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
 
 

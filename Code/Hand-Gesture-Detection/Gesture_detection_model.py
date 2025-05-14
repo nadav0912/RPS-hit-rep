@@ -16,12 +16,12 @@ class GRUModelV1(nn.Module):
         self.fc = nn.Linear(hidden_size, num_classes)
 
 
-    def forward(self, x):
+    def forward(self, x,  h_n=None):
         # x: (batch, seq_len, input_size)
-        out, h_n = self.gru(x)  # out: (batch, seq_len, hidden_size)
+        out, h_n = self.gru(x, h_n)  # out: (batch, seq_len, hidden_size)
         
         # Take output from the last time step
         last_time_step = out[:, -1, :]  # shape: (batch, hidden_size)
         
         out = self.fc(last_time_step)  # shape: (batch, num_classes)
-        return out
+        return out, h_n
