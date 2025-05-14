@@ -45,7 +45,7 @@ def show_record_example(example_images: list[list[int]], delay: float):
     count = size
     key = ''
 
-    while key != 's':
+    while key != 'q':
         key = chr(cv2.waitKey(delay) & 0xFF)
         count -= 1
         i = count%size
@@ -95,7 +95,7 @@ while cap.isOpened():
             # Stop record
             else:
                 print("Stop record example!")
-                show_record_example(example_images, 170)
+                show_record_example(example_images, 100)
                 add_example_to_dataset(label, hand_side, example_landmarks_data)
 
                 record_mode = False

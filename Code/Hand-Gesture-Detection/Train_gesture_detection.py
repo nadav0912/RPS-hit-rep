@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+import torch.optim.adam
 from torch.utils.data import DataLoader, Subset
 from torchmetrics.classification import Accuracy, ConfusionMatrix
 from tqdm.auto import tqdm 
@@ -23,8 +24,8 @@ OUTPUT_SIZE = 3
 
 BATCH_SIZE = 200
 
-EPOCHS = 100
-LEARNING_RATE = 1e-3  # 10^(-3)
+EPOCHS = 130
+LEARNING_RATE = 1e-4  # 10^(-3)
 
 RANDOM_SEED = 42
 
@@ -45,6 +46,7 @@ indexes = np.arange(len(dataset))
 
 # Split indices
 train_indexes, test_indexes = train_test_split(indexes, test_size=0.4, random_state=RANDOM_SEED)
+print(f"{len(train_indexes)} in train, {len(test_indexes)} in test.")
 
 # Split dataset
 train_subset = Subset(dataset, train_indexes)
@@ -85,7 +87,7 @@ loss_fn = nn.CrossEntropyLoss()
 accuracy_fn = Accuracy(task="multiclass", num_classes=OUTPUT_SIZE)
 confmat_fn = ConfusionMatrix(task="multiclass", num_classes=OUTPUT_SIZE)
 
-optimizer = torch.optim.SGD(model.parameters(), lr=LEARNING_RATE)
+optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
 
 # ---------- TRAINING & TESTING ---------- #

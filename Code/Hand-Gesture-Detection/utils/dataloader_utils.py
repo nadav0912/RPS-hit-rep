@@ -36,6 +36,9 @@ class handDataset(Dataset):
     def csvToTensor(self, csv_file):
 
         df = pd.read_csv(csv_file)  # size of (num_of_rows, 66)
+        percent = 0.7
+        df = df.iloc[:int(len(df)*percent)]
+        print(f"this is without the last {percent}% of each example")
         df = df.sort_values(by='id')
         label = df.iloc[0]['label']
         df = df.drop(columns=['hand-side', 'id', 'label'])  # size of (num_of_rows, 63)
