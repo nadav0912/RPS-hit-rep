@@ -54,7 +54,7 @@ def show_record_example(example_images: list[list[int]], delay: float):
         image = example_images[i]
         cv2.putText(image, str(i), (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (2, 57, 66), 3, lineType=cv2.LINE_AA)
 
-        cv2.imshow("example", example_images[count%size])
+        cv2.imshow("example", example_images[i])
 
 
 
@@ -67,7 +67,7 @@ while cap.isOpened():
 
     # Check if user press key
     key_code = cv2.waitKey(5) & 0xFF
-    key = chr(key_code)
+    key = chr(key_code).lower()
 
     # If found hand in image
     if hand: 
@@ -105,7 +105,7 @@ while cap.isOpened():
                 example_images.clear()
 
     # Check exit
-    if key.lower() == 'q':
+    if key == 'q':
         print("Stop runing...")
         break
 
@@ -116,4 +116,4 @@ while cap.isOpened():
 # Release resources
 cap.release()
 cv2.destroyAllWindows() 
-hands.close()  
+hands.close()

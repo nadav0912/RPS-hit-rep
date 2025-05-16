@@ -12,11 +12,16 @@ hands = mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5
 
 # Initialize webcam
 cap = cv2.VideoCapture(0)
+print(cap.get(cv2.CAP_PROP_FPS))
 
 while cap.isOpened():  # Continue looping if the camera is still open
     ret, frame = cap.read()   # Read a frame from the camera. 'ret' is a boolean (True if the frame was read correctly), 'frame' is the image itself.
 
     # Detection
+    """
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    image = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
+    """
     image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert the frame to RGB (MediaPipe uses RGB format while the image captured by OpenCV in BGR format)
     image = cv2.flip(image, 1)  # flip on horizontal
     image.flags.writeable = False  # A flag that make the image to read-only befor sending to the model 

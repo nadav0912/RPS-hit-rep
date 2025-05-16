@@ -58,7 +58,6 @@ def draw_label_on_image(landmarks, image, label_text):
     return image
 
 
-
 # -------- Main Loop -------- #
 while cap.isOpened():
     success, frame = cap.read()
@@ -67,7 +66,7 @@ while cap.isOpened():
 
     # Get key press
     key_code = cv2.waitKey(5) & 0xFF
-    key = chr(key_code)
+    key = chr(key_code).lower()
     
     # If found hand in image
     if hand: 
@@ -85,7 +84,7 @@ while cap.isOpened():
             # Process hand frame in model
             landmarks = prepare_landmarks_to_model(hand.landmark)
             logits = live_wrapper.step(landmarks)
-            probs = torch.softmax(logits.flatten(), dim=0)
+            probs = torch.softmax(logits.squeeze(), dim=0)
             label_idx = probs.argmax().item()
             
             # Draw predicted label on image

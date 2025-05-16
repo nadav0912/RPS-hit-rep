@@ -109,7 +109,7 @@ def prepare_landmarks_to_model(landmarks) -> torch.tensor:
     lm = landmarks_to_list(landmarks)
     normalized_lm = normalize_landmarks(lm)
     tensor_lm = torch.tensor(normalized_lm, dtype=torch.float32).flatten()  # tensor with one dim in size 63 (given list in the format [[x, y, z], ...])
-    batch = tensor_lm.unsqueeze(dim=0).unsqueeze(dim=0)  # reshape the tensor from shape (63,) to (1, 1, 63)
+    batch = tensor_lm.unsqueeze(dim=0).unsqueeze(dim=0)  # reshape the tensor from shape (63) to (1, 1, 63)
 
     return batch
  

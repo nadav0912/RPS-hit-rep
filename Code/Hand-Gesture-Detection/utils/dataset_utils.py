@@ -43,13 +43,12 @@ def add_example_to_dataset(label:str, hand_side: str, landmarks_data: list[list[
 
 
 def prepare_data_to_df(landmarks_data: list[list[list[int]]], label:str, hand_side: str) -> list[dict]:
-    """ Create list with all rows. each row is a dict in the format {"hand-side": , "label": ,x1:, y1:, z1:, x2: , ....}
+    """ Create list with all rows. each row is a dict in the format {"hand-side": , "label": ,"id": ,x1:, y1:, z1:, x2: , ....}
         To each roe it add is sequence id as id """
     rows = []
     for i, landmark in enumerate(landmarks_data):
         row = {"hand-side": hand_side, "label": label, "id": i}
-        normalize_landmark = normalize_landmarks(landmark)
-        for i, dot in enumerate(normalize_landmark):
+        for i, dot in enumerate(landmark):
             row[f"x{i}"] = dot[0]
             row[f"y{i}"] = dot[1]
             row[f"z{i}"] = dot[2]
