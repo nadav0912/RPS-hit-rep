@@ -63,7 +63,7 @@ echo =====================================================
 echo.
 echo READ THIS! :)
 echo 1. YOU, the user must run the following command:
-echo    venv\Scripts\activate
+echo    .\venv\Scripts\activate
 echo    It will activate the venv for you to start working.
 echo.
 echo 2. Select this venv's python interpreter:
