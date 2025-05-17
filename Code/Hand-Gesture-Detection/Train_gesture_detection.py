@@ -13,21 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
 from utils import handDataset, collate_func, confusion_matrix_heat_map, loss_and_acc_graghs, save_model
+from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, RANDOM_SEED
 from Gesture_detection_model import GRUModelV1
-
-
-# ---------- HYPERPARAMETERS ---------- #
-NUM_LAYERS = 2
-HIDDEN_SIZE = 128  # test 64 to 128
-INPUT_SIZE = 63
-OUTPUT_SIZE = 3
-
-BATCH_SIZE = 200
-
-EPOCHS = 130
-LEARNING_RATE = 1e-4  # 10^(-3)
-
-RANDOM_SEED = 42
 
 
 # Device agonstic code
@@ -35,7 +22,6 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device.")
 
 label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
-
 
 
 # ---------- GET DATASET ---------- #
@@ -80,7 +66,6 @@ model = GRUModelV1(
 print("\nMODEL:\n", model)
 
 
-
 # ---------- LOSS & OPTIMIZER ---------- #
 loss_fn = nn.CrossEntropyLoss()
 
@@ -119,7 +104,6 @@ def test():
                         acc = accuracy_fn(y_preds, labels)
 
         return loss.item(), acc
-
 
 
 # ---------- MAIN LOOP ---------- #

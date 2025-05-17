@@ -3,8 +3,8 @@ import mediapipe as mp
 import torch
 import cv2
 from pathlib import Path
+from utils import MODEL_PATH
 
-MODEL_PATH = Path(__file__).parent.parent / "models_state_dicts"
 
 class LiveGRUWrapper:
     def __init__(self, model):
@@ -21,7 +21,6 @@ class LiveGRUWrapper:
             output, self.h_n = self.model(row_tensor, self.h_n)
 
         return output
-
 
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):

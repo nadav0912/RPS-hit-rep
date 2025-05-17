@@ -4,12 +4,8 @@ import numpy as np
 import torch
 from Gesture_detection_model import GRUModelV1
 from utils import LiveGRUWrapper, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model
+from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE
 
-# -------- INITIALIZATION -------- #
-NUM_LAYERS = 2
-HIDDEN_SIZE = 128 
-INPUT_SIZE = 63
-OUTPUT_SIZE = 3
 
 model = GRUModelV1(
         input_size=INPUT_SIZE,

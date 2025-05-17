@@ -2,9 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 from utils import normalize_landmarks
-
-
-dataset_path = Path(__file__).resolve().parent.parent / "data"
+from utils import DATASET_PATH
 
 
 def add_example_to_dataset(label:str, hand_side: str, landmarks_data: list[list[list[int]]]):
@@ -34,7 +32,7 @@ def add_example_to_dataset(label:str, hand_side: str, landmarks_data: list[list[
 
     # Create new file path
     file_id = get_last_example_id() + 1
-    file_path = dataset_path / (str(file_id) + ".csv")
+    file_path = DATASET_PATH / (str(file_id) + ".csv")
     
     # Save df as csv file in data
     df.to_csv(file_path, index=False)
@@ -63,7 +61,7 @@ def get_last_example_id()-> int:
             last_id - the last csv file name that in data folder. if data folder is empty reurn -1.
     """
     # Get all files inside dataset
-    entries = list(dataset_path.iterdir())
+    entries = list(DATASET_PATH.iterdir())
 
     # Find max file id (name)
     max = -1
@@ -73,7 +71,6 @@ def get_last_example_id()-> int:
             max = id
 
     return max
-
 
 
 if __name__ == "__main__":

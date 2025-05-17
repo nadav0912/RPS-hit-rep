@@ -6,11 +6,7 @@ import torch.nn.functional as F
 import pandas as pd
 import numpy as np
 from pathlib import Path
-
-
-label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
-
-test_folder = Path(__file__).resolve().parent.parent / 'data'
+from utils import LABEL_MAP, DATASET_PATH
 
 
 # Dataset class, used for dataloader
@@ -19,7 +15,7 @@ class handDataset(Dataset):
         self.dataset = []  # list of tensors
         self.labels = []  # list of int
 
-        self.addToDataset(test_folder)
+        self.addToDataset(DATASET_PATH)
 
     def __getitem__(self, index):
         return self.dataset[index], self.labels[index]
@@ -29,7 +25,7 @@ class handDataset(Dataset):
     
     # label map
     def labelToIndex(self, label):
-        return label_map.get(label.lower())
+        return LABEL_MAP.get(label.lower())
 
     # Used by addToDataset()
     # input: csv file

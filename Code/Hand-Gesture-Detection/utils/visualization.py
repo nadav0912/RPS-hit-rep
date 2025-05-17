@@ -1,8 +1,9 @@
 import seaborn as sns
 import matplotlib.pyplot as plt
+from utils import LABEL_MAP
 
-label_map = {'rock': 0, 'paper': 1, 'scissors': 2}
-label_list = list(label_map.keys())
+label_list = list(LABEL_MAP.keys())
+
 
 def confusion_matrix_heat_map(confmat_fn, y_preds, y_true):
     cm = confmat_fn(y_preds, y_true)
