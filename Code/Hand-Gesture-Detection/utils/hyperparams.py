@@ -20,6 +20,7 @@ HIDDEN_SIZE = 128       # Size of hidden state output vector
 INPUT_SIZE = 63         # Size of input vector
 OUTPUT_SIZE = 3         # Number of classes/labels
 
+TEST_SIZE = 0.4
 BATCH_SIZE = 200        # Training batch size
 EPOCHS = 130            # Training number of epocs
 LEARNING_RATE = 1e-4    # Training learning rate, currently: 10^(-3)

@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 
 from utils import handDataset, collate_func, confusion_matrix_heat_map, loss_and_acc_graghs, save_model
-from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, RANDOM_SEED
+from utils import TEST_SIZE, NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, BATCH_SIZE, EPOCHS, LEARNING_RATE, RANDOM_SEED
 from Gesture_detection_model import GRUModelV1
 
 
@@ -31,7 +31,7 @@ dataset = handDataset()
 indexes = np.arange(len(dataset))
 
 # Split indices
-train_indexes, test_indexes = train_test_split(indexes, test_size=0.4, random_state=RANDOM_SEED)
+train_indexes, test_indexes = train_test_split(indexes, test_size=TEST_SIZE, random_state=RANDOM_SEED)
 print(f"{len(train_indexes)} in train, {len(test_indexes)} in test.")
 
 # Split dataset
