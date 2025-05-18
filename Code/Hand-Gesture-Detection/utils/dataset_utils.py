@@ -2,7 +2,7 @@ import pandas as pd
 from pathlib import Path
 
 from utils import normalize_landmarks
-from utils import DATASET_PATH
+from .hyperparams import DATASET_PATH
 
 
 def add_example_to_dataset(label:str, hand_side: str, landmarks_data: list[list[list[int]]]):

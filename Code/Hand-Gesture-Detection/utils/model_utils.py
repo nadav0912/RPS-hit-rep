@@ -3,7 +3,7 @@ import mediapipe as mp
 import torch
 import cv2
 from pathlib import Path
-from utils import MODEL_PATH
+from .hyperparams import MODEL_PATH
 
 
 class LiveGRUWrapper:

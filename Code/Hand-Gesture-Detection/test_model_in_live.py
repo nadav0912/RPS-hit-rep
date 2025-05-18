@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from Gesture_detection_model import GRUModelV1
 from utils import LiveGRUWrapper, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model
-from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE
+from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL 
 
 
 model = GRUModelV1(
@@ -15,7 +15,7 @@ model = GRUModelV1(
         dropout_prob=0.3
 )
 
-load_model(model, model_name="train_70_percent")
+load_model(model, model_name=TRAINED_MODEL)
 live_wrapper = LiveGRUWrapper(model)
 
 labels = ['rock', 'paper', 'scissors']
