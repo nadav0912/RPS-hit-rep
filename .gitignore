@@ -1,7 +1,7 @@
-IR_YOLO11_example/runs/
-IR_YOLO11_example/datasets/
-IR_YOLO11_example/yolo11n-pose.pt
-IR_MediaPipe_example/result
+Experiments/Image-Recognition/YOLO11-Example/runs/
+Experiments/Image-Recognition/YOLO11-Example/datasets/
+Experiments/Image-Recognition/YOLO11-Example/yolo11n-pose.pt
+Experiments/Image-Recognition/MediaPipe-Example/result
 venv/
 myenv/
 python-3.12.0-amd64.exe
