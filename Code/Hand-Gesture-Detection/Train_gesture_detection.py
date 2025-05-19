@@ -69,8 +69,8 @@ print("\nMODEL:\n", model)
 # ---------- LOSS & OPTIMIZER ---------- #
 loss_fn = nn.CrossEntropyLoss()
 
-accuracy_fn = Accuracy(task="multiclass", num_classes=OUTPUT_SIZE)
-confmat_fn = ConfusionMatrix(task="multiclass", num_classes=OUTPUT_SIZE)
+accuracy_fn = Accuracy(task="multiclass", num_classes=OUTPUT_SIZE).to(device)
+confmat_fn = ConfusionMatrix(task="multiclass", num_classes=OUTPUT_SIZE).to(device)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 
@@ -80,6 +80,7 @@ def train():
         model.train()
 
         for batch, labels in train_dataloader:
+                batch, labels = batch.to(device), labels.to(device)
                 y_logits, _ = model(batch)
                 y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
 
@@ -90,20 +91,21 @@ def train():
                 loss.backward()
                 optimizer.step()
 
-        return loss.item(), acc
+        return loss.item(), acc.item()
 
 
 def test():
         model.eval()
         with torch.inference_mode():
                 for batch, labels in test_dataloader:
+                        batch, labels = batch.to(device), labels.to(device)
                         y_logits, _ = model(batch)
                         y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
                         
                         loss = loss_fn(y_logits, labels)
                         acc = accuracy_fn(y_preds, labels)
 
-        return loss.item(), acc
+        return loss.item(), acc.item()
 
 
 # ---------- MAIN LOOP ---------- #
@@ -129,6 +131,7 @@ all_test_exampels = []
 all_test_labels = []
 
 for batch, labels in test_dataloader:
+    batch, labels = batch.to(device), labels.to(device)
     all_test_exampels.append(batch)
     all_test_labels.append(labels)
 
@@ -142,7 +145,7 @@ with torch.inference_mode():
     y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
 
 
-report = classification_report(y_true=all_test_labels, y_pred=y_preds)
+report = classification_report(y_true=all_test_labels.cpu(), y_pred=y_preds.cpu())
 print(report)
 
 confusion_matrix_heat_map(confmat_fn, y_preds, all_test_labels)

@@ -3,8 +3,9 @@ import cv2
 import numpy as np
 import torch
 from Gesture_detection_model import GRUModelV1
-from utils import LiveGRUWrapper, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model
-from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL 
+from utils import LiveGRUWrapper 
+from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model
+from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL, LABEL_LIST
 
 
 model = GRUModelV1(
@@ -18,7 +19,6 @@ model = GRUModelV1(
 load_model(model, model_name=TRAINED_MODEL)
 live_wrapper = LiveGRUWrapper(model)
 
-labels = ['rock', 'paper', 'scissors']
 
 # Hand detection model and drawing utilities
 mp_hands = mp.solutions.hands
@@ -32,26 +32,6 @@ cap = cv2.VideoCapture(0)
 
 
 currently_detecting = False
-
-
-# -------- HELPER FUNC -------- #
-def draw_label_on_image(landmarks, image, label_text):
-    landmarks = np.array(landmarks_to_list(landmarks))
-    height, width, channels = image.shape
-
-    x_coordinates = landmarks[:, 0]
-    y_coordinates = landmarks[:, 1]
-
-    x_min = int(np.min(x_coordinates) * width)
-    x_max = int(np.max(x_coordinates) * width)
-    y_min = int(np.min(y_coordinates) * height)
-    y_max = int(np.max(y_coordinates) * height)
-
-
-    cv2.rectangle(image, (x_min, y_min), (x_max, y_max), color=(0, 255, 0), thickness=1)
-    cv2.putText(image, label_text, (35, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (40, 240, 40), 2, lineType=cv2.LINE_AA)
-
-    return image
 
 
 # -------- Main Loop -------- #
@@ -84,7 +64,7 @@ while cap.isOpened():
             label_idx = probs.argmax().item()
             
             # Draw predicted label on image
-            text = f"{labels[label_idx]} {(probs.max().item() * 100):.2f}%"
+            text = f"{LABEL_LIST[label_idx]} {(probs.max().item() * 100):.2f}%"
             draw_label_on_image(hand.landmark, image, text)
             
         else:

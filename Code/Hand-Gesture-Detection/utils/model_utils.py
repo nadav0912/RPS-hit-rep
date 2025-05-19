@@ -113,6 +113,27 @@ def prepare_landmarks_to_model(landmarks) -> torch.tensor:
     return batch
  
 
+def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list[int]]) -> list[list[int]]:
+    """
+    Predicts a label for each frame in the example using the LiveGRUWrapper.
+    Args:
+        live_wrapper: The model that processes each frame sequentially.
+        example: A list of frames, each a list of integers (features).
+    Returns:
+        A list of probabilities [_, _, _], one per frame.
+    """
+    probs_list = []
+
+    live_wrapper.reset()
+
+    for frame in example:
+        logits = live_wrapper.step(frame.unsqueeze(dim=0).unsqueeze(dim=0))
+        probs = torch.softmax(logits.squeeze(), dim=0).tolist()
+        probs_list.append(probs)
+
+    return probs_list
+
+
 def save_model(model: torch.nn.Module, model_name: str):
     MODEL_PATH.mkdir(parents=True, exist_ok=True) 
     model_name += '.pth'
