@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from Gesture_detection_model import GRUModelV1
 from utils import LiveGRUWrapper 
-from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model
+from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press
 from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL, LABEL_LIST
 
 
@@ -40,9 +40,7 @@ while cap.isOpened():
 
     hand, hand_side, image = hand_from_image(success, frame, hands)
 
-    # Get key press
-    key_code = cv2.waitKey(5) & 0xFF
-    key = chr(key_code).lower()
+    key = check_key_press()
     
     # If found hand in image
     if hand: 

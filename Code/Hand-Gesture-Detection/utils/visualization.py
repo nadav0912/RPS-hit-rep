@@ -3,10 +3,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import cv2
+import threading
 
 from .hyperparams import LABEL_MAP, LABEL_LIST
 from .model_utils import LiveGRUWrapper
 from .model_utils import landmarks_to_list, normalize_landmarks, get_label_list_from_example
+
+
+def check_key_press(delay: int = 1) -> str:
+    """
+    Waits briefly and returns the pressed key as a lowercase letter.
+    Requires an active OpenCV window to detect key presses.
+    """
+    key_code = cv2.waitKey(delay) & 0xFF
+
+    if key_code != 255:
+        print(f"Key pressed: {chr(key_code)}")
+        return chr(key_code).lower()
+
+    return ''
 
 
 def confusion_matrix_heat_map(confmat_fn, y_preds, y_true):
@@ -95,7 +110,7 @@ def show_record_example(example_images: list[list[int]], example_landmarks: list
     print("\nShow example. press s to save and c to cancel...")
     while True:
         # Check if user press key
-        key = chr(cv2.waitKey(100) & 0xFF)
+        key = check_key_press(delay=100)
 
         # Update index (i)
         count += 1

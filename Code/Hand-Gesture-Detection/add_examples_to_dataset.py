@@ -7,7 +7,7 @@ import os
 
 from utils import LiveGRUWrapper
 from Gesture_detection_model import GRUModelV1
-from utils import hand_from_image, landmarks_to_list, add_example_to_dataset, load_model, show_record_example
+from utils import hand_from_image, landmarks_to_list, add_example_to_dataset, load_model, show_record_example, check_key_press
 from utils import INPUT_SIZE, HIDDEN_SIZE, NUM_LAYERS, OUTPUT_SIZE, TRAINED_MODEL
 
 
@@ -53,9 +53,7 @@ while cap.isOpened():
 
     hand, hand_side, image = hand_from_image(success, image, hands)
 
-    # Check if user press key
-    key_code = cv2.waitKey(5) & 0xFF
-    key = chr(key_code).lower()
+    key_char = check_key_press()
 
     # If found hand in image
     if hand: 
@@ -71,14 +69,14 @@ while cap.isOpened():
             print("....")
 
         # Check start/stop record example
-        if key in key_label_dict.keys():
+        if key_char in key_label_dict.keys():
             # Strat record
             if not record_mode:
                 record_mode = True
                 hand_side = hand_side
-                label = key_label_dict[key]
+                label = key_label_dict[key_char]
 
-                print(f"Start record example of {key_label_dict[key]}...")
+                print(f"Start record example of {key_label_dict[key_char]}...")
 
             # Stop record
             else:
@@ -95,13 +93,12 @@ while cap.isOpened():
                 example_images.clear()
 
     # Check exit
-    if key == 'q':
+    if key_char == 'q':
         print("Stop runing...")
         break
 
-    # Show image
-    cv2.imshow('Hand Tracking', image) 
-
+    cv2.imshow('Hand Tracking', image)  # Show image
+    
 
 # Release resources
 cap.release()
