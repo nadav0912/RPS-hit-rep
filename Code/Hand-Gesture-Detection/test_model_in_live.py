@@ -2,6 +2,8 @@ import mediapipe as mp
 import cv2 
 import numpy as np
 import torch
+import time
+
 from Gesture_detection_model import GRUModelV1
 from utils import LiveGRUWrapper 
 from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press
@@ -30,9 +32,12 @@ hands = mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5
 # Computer camera
 cap = cv2.VideoCapture(0)
 
-
 currently_detecting = False
 
+# For FPS calculation
+start_time = time.time()
+prev_time = start_time
+count_frames = 0
 
 # -------- Main Loop -------- #
 while cap.isOpened():
@@ -73,6 +78,15 @@ while cap.isOpened():
                 print("Start detecting...")
 
 
+    # Measure and add to screen the FPS in live video
+    if success: count_frames += 1
+
+    current_time = time.time()
+    fps = 1 / (current_time - prev_time) # fps for this frame, 1 / time from previous frame
+    prev_time = current_time
+    cv2.putText(image, f"FPS: {fps:.2f}", (400, 40),cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 255, 0), 2)
+
+
     # Check exit
     if key == 'q':
         print("Stop runing...")
@@ -86,3 +100,9 @@ while cap.isOpened():
 cap.release()  # Release the camera resource.
 cv2.destroyAllWindows()  # Close OpenCV windows.
 hands.close()  # Release hands model.
+
+
+# Calculate FPS and print results
+current_time = time.time()
+fps = count_frames / (current_time - start_time)
+print(f"\nProgram Run in total {(current_time - start_time):.2f} seconds\nNum frames: {count_frames}\nAvarage FPS: {fps:.2f}")

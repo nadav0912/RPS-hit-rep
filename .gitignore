@@ -4,4 +4,5 @@ Experiments/Image-Recognition/YOLO11-Example/yolo11n-pose.pt
 Experiments/Image-Recognition/MediaPipe-Example/result
 venv/
 myenv/
+**/__pycache__/
 python-3.12.0-amd64.exe
