@@ -5,4 +5,5 @@ Experiments/Image-Recognition/MediaPipe-Example/result
 venv/
 myenv/
 **/__pycache__/
+*.py[cod]
 python-3.12.0-amd64.exe
