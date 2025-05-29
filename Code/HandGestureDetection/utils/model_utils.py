@@ -2,14 +2,14 @@ import numpy as np
 import mediapipe as mp
 import torch
 import cv2
+import onnxruntime as ort
 from pathlib import Path
-from .hyperparams import MODEL_PATH
+from .hyperparams import MODEL_PATH, NUM_LAYERS, HIDDEN_SIZE
 
 
 class LiveGRUWrapper:
     def __init__(self, model):
         self.model = model
-        self.h_n = None
 
     def reset(self):
         self.h_n = None
