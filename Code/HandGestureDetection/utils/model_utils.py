@@ -145,4 +145,5 @@ def save_model(model: torch.nn.Module, model_name: str):
 def load_model(model: torch.nn.Module, model_name: str):
     model_name += '.pth'
     MODEL_SAVE_PATH = MODEL_PATH / model_name
-    model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
+    model.load_state_dict(torch.load(f=MODEL_SAVE_PATH, map_location=torch.device('cpu')))
+    # model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))

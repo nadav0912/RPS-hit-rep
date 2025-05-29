@@ -130,7 +130,7 @@ def show_record_example(example_images: list[list[int]], example_landmarks: list
         image = example_images[i]
         probs = probs_list[i]
         label = LABEL_LIST[probs.index(max(probs))]
-        text = f"frame: {str(i)} | pred: {label} | {[f"{p * 100:.2f}%" for p in probs]} | {LABEL_LIST}"
+        text = f"frame: {str(i)} | pred: {label} | {[f'{p * 100:.2f}%' for p in probs]} | {LABEL_LIST}"
 
         cv2.putText(image, text, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (2, 57, 66), 1, lineType=cv2.LINE_AA)
         cv2.imshow("example", image)
