@@ -4,7 +4,7 @@ import torch
 import cv2
 import math
 from pathlib import Path
-from hyperparams import MODEL_PATH
+from .hyperparams import MODEL_PATH
 
 
 class LiveGRUWrapper:
@@ -58,12 +58,12 @@ def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.
     return hand, hand_side, image
 
 
-def landmarks_to_list(landmarks) -> list[list[int]]:
+def landmarks_to_list(landmarks) -> list[list[float]]:
     return [[lm.x, lm.y, lm.z] for lm in landmarks]
 
 
 
-def normalize_position(landmarks: list[list[int]]) -> list[list[int]]:
+def normalize_position(landmarks: list[list[float]]) -> list[list[float]]:
     """
     Normalize the hand landmarks to remove differences in position and size.
     This moves the hand to start at (0, 0, 0) and scales it so all points are between 0 and 1.
@@ -111,7 +111,7 @@ def get_rotation_angle(wrist: list, index_mcp: list) -> float:
     return angle
 
 
-def rotate_landmarks(landmarks: list[list[int]], angle_rad:float, center:list) -> list[list[int]]:
+def rotate_landmarks(landmarks: list[list[float]], angle_rad:float, center:list) -> list[list[float]]:
     """
     Rotates all landmarks by -angle_rad around the center (usually the wrist).
     The rotation is in the XY plane (Z stays the same).
@@ -140,7 +140,7 @@ def rotate_landmarks(landmarks: list[list[int]], angle_rad:float, center:list) -
     return rotated
 
 
-def normalize_landmarks(landmarks: list[list[int]]) -> list[list[int]]:
+def normalize_landmarks(landmarks: list[list[float]]) -> list[list[float]]:
     """
     Get landmarks as list and return them ofter normalize all values inside.
     landmark format (input and output): [[x0, y0, z0], [x1, y1, z1], ...]
@@ -179,7 +179,7 @@ def prepare_landmarks_to_model(landmarks) -> torch.tensor:
     return batch
  
 
-def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list[int]]) -> list[list[int]]:
+def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list[float]]) -> list[list[float]]:
     """
     Predicts a label for each frame in the example using the LiveGRUWrapper.
     Args:
@@ -198,6 +198,18 @@ def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list
         probs_list.append(probs)
 
     return probs_list
+
+
+def MSS(landmarks1: list[list[float]], landmarks2: list[list[float]]) -> float:
+    """Calculate the Mean Squared Error (MSE) between two sets of 3D landmarks."""
+    sum = 0.0
+
+    for i in range(len(landmarks1)):
+        x1, y1, z1 = landmarks1[i]
+        x2, y2, z2 = landmarks2[i]
+        sum += (x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2
+
+    return sum / len(landmarks1)  # Return the average squared distance
 
 
 def save_model(model: torch.nn.Module, model_name: str):
