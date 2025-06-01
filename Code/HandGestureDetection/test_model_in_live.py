@@ -6,7 +6,7 @@ import time
 
 from Gesture_detection_model import GRUModelV1
 from utils import LiveGRUWrapper 
-from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press
+from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press, MSS
 from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL, LABEL_LIST
 
 
@@ -34,6 +34,9 @@ cap = cv2.VideoCapture(0)
 
 currently_detecting = False
 
+prev_landmarks = None  # For calculate distance between previous and current landmarks
+mss = 100
+
 # For FPS calculation
 start_time = time.time()
 prev_time = start_time
@@ -60,16 +63,27 @@ while cap.isOpened():
                 currently_detecting = False
                 print("Stop detecting...")
 
-            # Process hand frame in model
-            landmarks = prepare_landmarks_to_model(hand.landmark)
-            logits = live_wrapper.step(landmarks)
-            probs = torch.softmax(logits.squeeze(), dim=0)
-            label_idx = probs.argmax().item()
-            
-            # Draw predicted label on image
-            text = f"{LABEL_LIST[label_idx]} {(probs.max().item() * 100):.2f}%"
+            # Calculate and print the Mean Squared Error (MSS) between previous and current landmarks
+            landmarks_list = landmarks_to_list(hand.landmark)
+            if prev_landmarks:
+                mss = MSS(prev_landmarks, landmarks_list)
+                #print(f"MSS: {mss:.7f}")
+
+            prev_landmarks = landmarks_list
+
+            if mss > 0.0001:
+                print(f"Landmarks changed, MSS: {mss:.7f}")
+                # Process hand frame in model
+                landmarks = prepare_landmarks_to_model(hand.landmark)
+                logits = live_wrapper.step(landmarks)
+                probs = torch.softmax(logits.squeeze(), dim=0)
+                label_idx = probs.argmax().item()
+                
+                # Draw predicted label on image
+                text = f"{LABEL_LIST[label_idx]} {(probs.max().item() * 100):.2f}%"
+
             draw_label_on_image(hand.landmark, image, text)
-            
+        
         else:
             # Start detecting when press s
             if key == 's':
