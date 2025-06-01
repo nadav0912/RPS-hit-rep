@@ -1,0 +1,5 @@
+
+DETECTION_PROB_TRESHOLD = 0.7
+DETECTION_FRAME_TRESHOLD = 10
+
+LABEL_LIST = ['rock', 'paper', 'scissors']

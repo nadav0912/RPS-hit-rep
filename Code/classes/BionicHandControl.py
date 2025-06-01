@@ -18,7 +18,7 @@ pca.frequency = 50  # Typical servo frequency
 servos = [servo.Servo(pca.channels[i]) for i in range(5)]
 
 
-class HandControl():
+class BionicHandControl():
     def __init__(self):
         # Create I2C bus
         i2c = busio.I2C(SCL, SDA)
@@ -65,13 +65,16 @@ class HandControl():
 """
 
 
-class HandControlTest():
+class BionicHandControlTest():
     """
     A mock/test class to simulate hand gesture controls and LED actions.
     This can be used for unit testing or demonstration purposes without needing hardware.
     """
     def __init__(self):
         pass 
+
+    def idle(self):
+        print("Idle gesture simulated.")
         
     def rock(self):
         print("Rock gesture simulated.")
@@ -82,16 +85,27 @@ class HandControlTest():
     def scissors(self):
         print("Scissors gesture simulated.")
         
-        
     def ledOn(self):
         print("LED turned on.")
 
     def ledOff(self):
         print("LED turned off.")
 
+    def CounterMove(self, gesture: str):
+        if gesture == "rock":
+            self.paper()
+        elif gesture == "paper":
+            self.scissors()
+        elif gesture == "scissors":
+            self.rock()
+        elif gesture == "idle":
+            self.idle()
+        else:
+            print(f"Unknown gesture: {gesture}")
+
 
 if __name__ == "__main__":
-    hand = HandControlTest()
+    hand = BionicHandControlTest()
     
     hand.ledOn()
 
