@@ -52,16 +52,22 @@ start_time = time.time()
 prev_time = start_time
 count_frames = 0
 
+sum_mediapip_time = 0.0
+
 # -------- Main Loop -------- #
 while cap.isOpened():
     success, frame = cap.read()
 
+    start_mediapipe_time = time.time() # Measure time for mediapipe processing
     hand, hand_side, image = hand_from_image(success, frame, hands)
+    end_mediapipe_time = time.time() 
+
+    sum_mediapip_time += (end_mediapipe_time - start_mediapipe_time)
 
     key = check_key_press()
     
     # If found hand in image
-    if hand: 
+    if hand:
         # Draw the landmark on the image
         mp_drawing.draw_landmarks(image, hand, mp_hands.HAND_CONNECTIONS, 
                                             mp_drawing.DrawingSpec(color=(121, 22, 76), thickness=1, circle_radius=2),
@@ -72,6 +78,7 @@ while cap.isOpened():
             if key == 's':
                 currently_detecting = False
                 print("Stop detecting...")
+
 
             # Calculate and print the Mean Squared Error (MSS) between previous and current landmarks
             landmarks_list = landmarks_to_list(hand.landmark)
@@ -95,7 +102,7 @@ while cap.isOpened():
                 text = f"{LABEL_LIST[label_idx]} {(probs.max().item() * 100):.2f}%"
 
             draw_label_on_image(hand.landmark, image, text)
-        
+
         else:
             # Start detecting when press s
             if key == 's':
@@ -103,10 +110,8 @@ while cap.isOpened():
                 live_wrapper.reset()
                 print("Start detecting...")
 
-
     # Measure and add to screen the FPS in live video
-    if success: count_frames += 1
-
+    count_frames += 1
     current_time = time.time()
     fps = 1 / (current_time - prev_time) # fps for this frame, 1 / time from previous frame
     prev_time = current_time
@@ -117,10 +122,13 @@ while cap.isOpened():
     if key == 'q':
         print("Stop runing...")
         break
-
+    
     # Show image
     cv2.imshow('Hand Tracking', image) 
 
+
+# Take time when main loop stops
+current_time = time.time()
 
 
 cap.release()  # Release the camera resource.
@@ -129,6 +137,12 @@ hands.close()  # Release hands model.
 
 
 # Calculate FPS and print results
-current_time = time.time()
-fps = count_frames / (current_time - start_time)
-print(f"\nProgram Run in total {(current_time - start_time):.2f} seconds\nNum frames: {count_frames}\nAvarage FPS: {fps:.2f}")
+total_time = current_time - start_time
+fps = count_frames / total_time
+print(f"\nProgram Run in total {(total_time):.4f} seconds\nNum frames: {count_frames}\nAvarage FPS: {fps:.2f}")
+print(f"Avarge time between frames: {total_time/count_frames:.4f} seconds")
+
+print(f"Total time for mediapipe processing: {sum_mediapip_time:.4f} seconds")
+print(f"Average time for mediapipe processing: {sum_mediapip_time / count_frames:.4f} seconds per frame")
+print(f"mediapipe time precentage from total time: {(sum_mediapip_time / total_time) * 100:.4f}%")
+
