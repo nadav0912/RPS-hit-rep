@@ -86,6 +86,8 @@ while cap.isOpened():
                 # Process hand frame in model
                 landmarks = prepare_landmarks_to_model(hand.landmark)
                 logits = live_wrapper.step(landmarks)
+                logits = torch.tensor(logits, dtype=torch.float32)
+                print(f"Logits: {logits}, {logits.shape}, {logits}")
                 probs = torch.softmax(logits.squeeze(), dim=0)
                 label_idx = probs.argmax().item()
                 
