@@ -5,22 +5,32 @@ import torch
 import time
 
 from Gesture_detection_model import GRUModelV1
-from utils import LiveGRUWrapper 
-from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press, MSS
+from pathlib import Path
 from utils import NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, OUTPUT_SIZE, TRAINED_MODEL, LABEL_LIST
+from utils import LiveGRUWrapper, LiveONNXGRUWrapper
+from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press, MSS
+from utils import TRAINED_MODEL, LABEL_LIST
 
 
-model = GRUModelV1(
+'''
+MODEL = GRUModelV1(
         input_size=INPUT_SIZE,
         hidden_size=HIDDEN_SIZE,
         num_layers=NUM_LAYERS,
         num_classes=OUTPUT_SIZE,
-        dropout_prob=0.3
+        dropout_prob=DROP_OUT
 )
+load_model(MODEL, model_name=TRAINED_MODEL)
+live_wrapper = LiveGRUWrapper(MODEL)
+'''
 
-load_model(model, model_name=TRAINED_MODEL)
-live_wrapper = LiveGRUWrapper(model)
+#Path to ONNX file
+onnx_path = Path(__file__).parent / "models_state_compiled" / f"{TRAINED_MODEL}.onnx"
+if not onnx_path.exists():
+    raise FileNotFoundError(f"ONNX file not found: {onnx_path}")
 
+print(f"Found ONNX model at: {onnx_path}, called {TRAINED_MODEL}.onnx")
+live_wrapper = LiveONNXGRUWrapper(onnx_path)
 
 # Hand detection model and drawing utilities
 mp_hands = mp.solutions.hands

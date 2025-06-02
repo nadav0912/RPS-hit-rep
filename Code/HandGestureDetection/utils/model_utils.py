@@ -3,14 +3,15 @@ import mediapipe as mp
 import torch
 import cv2
 import math
+import onnx
+import onnxruntime as ort
 from pathlib import Path
-from .hyperparams import MODEL_PATH
+from .hyperparams import MODEL_PATH, NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, ONNX_PATH
 
 
 class LiveGRUWrapper:
     def __init__(self, model):
         self.model = model
-        self.h_n = None
 
     def reset(self):
         self.h_n = None
@@ -22,6 +23,52 @@ class LiveGRUWrapper:
             output, self.h_n = self.model(row_tensor, self.h_n)
 
         return output
+
+
+class LiveONNXGRUWrapper:
+    def __init__(self, onnx_path):
+        self.session = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
+        self.h_n = None
+        self.reset()
+
+    def reset(self):
+        # infer h_n shape by running with zeros for the ONNX space allocation
+        self.h_n = np.zeros((NUM_LAYERS, 1, HIDDEN_SIZE), dtype=np.float32)
+
+    def step(self, row_tensor):
+        # row_tensor: (batch size: 1, sequence size: 1, input size: 63)
+        x_np = row_tensor.cpu().numpy()     # ONNX expects numpy float32 only
+
+        logits, h1 = self.session.run(None, {"x": x_np, "h0": self.h_n})
+        self.h_n = h1
+        return logits
+
+
+def export_torch_to_ONNX(model: torch.nn.Module, model_name: str):
+    ONNX_FILE = ONNX_PATH / (model_name + ".onnx")
+
+    load_model(model, model_name=model_name)
+    model.eval()
+
+    # ONNX needs dummy input to define itself
+    x_dummy = torch.randn(1, 1, INPUT_SIZE)             # (batch, seq, keypoints) -> (1,1,63)
+    h_dummy = torch.zeros(NUM_LAYERS, 1, HIDDEN_SIZE)   # (layers, batch, hidden size)
+
+    torch.onnx.export(
+        model,
+        (x_dummy, h_dummy),                             # tuple with arguments for .forward()
+        ONNX_FILE.as_posix(),                           # PATH to save the exported model
+        opset_version = 17,                             # ONNX version
+        input_names  = ["x", "h0"],
+        output_names = ["logits", "h1"],
+        dynamic_axes = {
+            "x": {0: "batch", 1: "seq"},
+            "logits": {0: "batch", 1: "seq"}
+        }
+    )
+
+    onnx.checker.check_model(ONNX_FILE)    # raises if anything is wrong
+    print("exported to", ONNX_FILE)
 
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):
@@ -217,13 +264,15 @@ def save_model(model: torch.nn.Module, model_name: str):
     model_name += '.pth'
     MODEL_SAVE_PATH = MODEL_PATH / model_name
     print(f"Saving model to: {MODEL_SAVE_PATH}")
-    torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)  
+    torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
+    export_torch_to_ONNX(model=model, model_name=model_name)
 
 
 def load_model(model: torch.nn.Module, model_name: str):
     model_name += '.pth'
     MODEL_SAVE_PATH = MODEL_PATH / model_name
-    model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
+    model.load_state_dict(torch.load(f=MODEL_SAVE_PATH, map_location=torch.device('cpu')))
+    # model.load_state_dict(torch.load(f=MODEL_SAVE_PATH))
 
 
 if __name__ == "__main__":
@@ -252,3 +301,4 @@ if __name__ == "__main__":
     ]
 
     normalize_landmarks(landmarks)
+
