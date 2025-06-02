@@ -1,11 +1,18 @@
 import torch
-from ..utils import landmarks_to_tensor
-from ..main_hyperparmeters import LABEL_LIST
+from pathlib import Path
+from utils import landmarks_to_tensor
+from main_hyperparmeters import LABEL_LIST, INPUT_SIZE, HIDDEN_SIZE, NUM_LAYERS, OUTPUT_SIZE
 
-class MovePredictor():
-    def __init__(self, model: torch.nn.Module, model_path: str):
-        self.model = model
-        self.model.load_state_dict(torch.load(model_path + '.pth'))
+class GRUGestureClassifier():
+    def __init__(self, model: torch.nn.Module, model_parameters_path: Path):
+         # instantiate the model
+        self.model = model(
+                input_size=INPUT_SIZE,
+                hidden_size=HIDDEN_SIZE,
+                num_layers=NUM_LAYERS,
+                num_classes=OUTPUT_SIZE,
+        )  
+        self.model.load_state_dict(torch.load(model_parameters_path))
         self.model.eval()
 
         self.live_wrapper = LiveGRUWrapper(self.model)

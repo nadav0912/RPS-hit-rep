@@ -91,7 +91,7 @@ class BionicHandControlTest():
     def ledOff(self):
         print("LED turned off.")
 
-    def CounterMove(self, gesture: str):
+    def  move(self, gesture: str):
         if gesture == "rock":
             self.paper()
         elif gesture == "paper":

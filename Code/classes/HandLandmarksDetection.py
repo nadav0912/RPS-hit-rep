@@ -2,10 +2,10 @@ import cv2
 import mediapipe as mp
 import math
 import numpy as np
-from ..utils import get_rotation_angle
+from utils import get_rotation_angle
 
 
-class HandDetection():
+class HandLandmarksDetection():
     def __init__(self):
         mp_hands = mp.solutions.hands
         
@@ -24,7 +24,7 @@ class HandDetection():
         landmarks = self.landmarks_to_list(landmarks.landmark)
         
         # Choose points for rotation and center
-        angle_rad = get_rotation_angle(wrist=landmarks[0], index_mcp=landmarks[2])
+        angle_rad = get_rotation_angle(landmarks[0], landmarks[2])
         center = landmarks[0]  
 
         # Normalize angle
