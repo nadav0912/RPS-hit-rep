@@ -3,22 +3,25 @@
 import cv2 
 import time
 
-# Importing main classes
-from .classes.BionicHandControl import BionicHandControlTest
-from .classes.HandDetection import HandDetection
-from .classes.GestureClassifier import GestureClassifier
-from .classes.MovePredictor import MovePredictor
 
-from .utils import *
-from .main_hyperparmeters import *
+# Importing main classes
+from classes.BionicHandControl import BionicHandControlTest
+from classes.HandLandmarksDetection import HandLandmarksDetection
+from classes.StaticHandGestureClassifier import StaticHandGestureClassifier
+from classes.GRUGestureClassifier import GRUGestureClassifier
+
+from utils import *
+from main_hyperparmeters import *
+from final_models.GRU_model import GRUModelV1
+from final_models.static_gesture_classifier_model import staticGestureModelV1
 
 
 
 # -------------------- INITIALIZATION -------------------- #
 bionicHandControl = BionicHandControlTest()
-handDetection = HandDetection()
-gestureClassifier = GestureClassifier()
-movePredictor = MovePredictor()
+handLandmarksDetection = HandLandmarksDetection()
+staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
+GRUgestureClassifier = GRUGestureClassifier(model=GRUModelV1, model_parameters_path=GRU_MODEL_PATH)
 
 camera = connect_camera()  # Connected to defult camera
 
@@ -30,9 +33,6 @@ game_status = "idle"  # Game state:
 frame_counter = 0
 
 bionic_hand_gesture = None  # Opponent's gesture, used for result state
-
-
-
 
 
 
@@ -49,43 +49,45 @@ def idle_state(key: str):
             time.sleep(1) 
             bionicHandControl.ledOn()
 
-    game_status = "active"
-    print("Active state: Hand detection and Move prediction in progress...")
+        game_status = "active"
+        print("Active state: Hand detection and Move prediction in progress...")
 
 
 def active_state(image: cv2.Mat):
     global game_status, frame_counter, bionic_hand_gesture
 
     # Hand detection
-    landmarks = handDetection.landmarks_from_image(image)
+    landmarks = handLandmarksDetection.landmarks_from_image(frame=image)
 
     if landmarks:
         frame_counter += 1
 
         # Pass through GRU model
-        gesture, prob = movePredictor.predict(landmarks)
+        gesture, prob = GRUgestureClassifier.predict(landmarks)
 
         # Check stop condition
         if prob > DETECTION_PROB_TRESHOLD and frame_counter > DETECTION_FRAME_TRESHOLD:
             bionic_hand_gesture = counterGesture(gesture) # Save bionic hand gesture
             bionicHandControl.move(bionic_hand_gesture) # Tell bionic hand to make counter move
-            movePredictor.reset() # Reset previous information in GRU model 
+            GRUgestureClassifier.reset() # Reset previous information in GRU model 
             frame_counter = 0
             game_status = "result"
+
+            print(f"GRU model predicted gesture: {gesture}, with probability: {prob}")
 
 
 def result_state():
     global game_status, bionic_hand_gesture
 
     # Hand detection
-    landmarks = handDetection.landmarks_from_image(image)
+    landmarks = handLandmarksDetection.landmarks_from_image(image)
 
     if landmarks:
         time.sleep(1)
         # Predict gesture using the classifier
-        gesture = gestureClassifier.predict(landmarks)
+        gesture = staticHandGestureClassifier.predict(landmarks)
     
-        print(f"Opponent's gesture: {gesture}, Hand gesture: {bionic_hand_gesture}")
+        print(f"static geture model predicted: {gesture}, bionic hand do: {bionic_hand_gesture}")
         print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")
         
         bionicHandControl.ledOff()
@@ -118,11 +120,15 @@ while camera.isOpened():
     elif game_status == "result":
         result_state()
 
-
     # Check exit
     if key == 'q':
         print("Stop runing...")
         break
+
+    # Show image
+    cv2.imshow("Hand Detection", image)
+
+    print("game state:",game_status)
 
 
 camera.release()  # Release the camera resource.
