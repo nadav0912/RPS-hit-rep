@@ -28,17 +28,15 @@ class LiveONNXGRUWrapper:
     def __init__(self, onnx_path):
         self.session = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
         self.h_n = None
+        self.reset()
 
     def reset(self):
-        self.h_n = None
+        # infer h_n shape by running with zeros for the ONNX space allocation
+        self.h_n = np.zeros((NUM_LAYERS, 1, HIDDEN_SIZE), dtype=np.float32)
 
     def step(self, row_tensor):
         # row_tensor: (batch size: 1, sequence size: 1, input size: 63)
         x_np = row_tensor.cpu().numpy()     # ONNX expects numpy float32 only
-
-        if self.h_n is None:
-            # Infer h_n shape by running once with zeros
-            self.h_n = np.zeros((NUM_LAYERS, 1, HIDDEN_SIZE), dtype=np.float32)  # placeholder
 
         logits, h1 = self.session.run(None, {"x": x_np, "h0": self.h_n})
         self.h_n = h1
@@ -191,7 +189,6 @@ def save_model(model: torch.nn.Module, model_name: str):
     print(f"Saving model to: {MODEL_SAVE_PATH}")
     torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
     export_torch_to_ONNX(model_name=model_name)
-
 
 
 def load_model(model: torch.nn.Module, model_name: str):

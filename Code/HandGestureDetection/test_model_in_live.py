@@ -4,14 +4,24 @@ import numpy as np
 import torch
 import time
 
-from utils import LiveGRUWrapper
+from pathlib import Path
+from utils import LiveGRUWrapper, LiveONNXGRUWrapper
 from utils import draw_label_on_image, load_model, hand_from_image, landmarks_to_list, prepare_landmarks_to_model, check_key_press
 from utils import TRAINED_MODEL, LABEL_LIST, MODEL
 
 
+'''
 load_model(MODEL, model_name=TRAINED_MODEL)
 live_wrapper = LiveGRUWrapper(MODEL)
+'''
 
+#Path to ONNX file
+onnx_path = Path(__file__).parent / "models_state_compiled" / f"{TRAINED_MODEL}.onnx"
+if not onnx_path.exists():
+    raise FileNotFoundError(f"ONNX file not found: {onnx_path}")
+
+print(f"Found ONNX model at: {onnx_path}, called {TRAINED_MODEL}.onnx")
+live_wrapper = LiveONNXGRUWrapper(onnx_path)
 
 # Hand detection model and drawing utilities
 mp_hands = mp.solutions.hands
