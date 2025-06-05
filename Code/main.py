@@ -12,7 +12,7 @@ from classes.GRUGestureClassifier import GRUGestureClassifier
 
 from utils import *
 from main_hyperparmeters import *
-from final_models.GRU_model import GRUModelV1
+from Code.final_models.GRU.GRU_model import GRUModelV1
 from final_models.static_gesture_classifier_model import staticGestureModelV1
 
 

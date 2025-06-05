@@ -30,7 +30,7 @@ mp_drawing = mp.solutions.drawing_utils
 hands = mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=2)
 
 # Computer camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 currently_detecting = False
 

@@ -2,15 +2,25 @@ import cv2
 import mediapipe as mp
 import math
 import numpy as np
+
+from final_models.palm_detection.palm_detection import PalmDetection
+from final_models.hand_landmark.hand_landmark import HandLandmark
 from utils import get_rotation_angle
 
 
 class HandLandmarksDetection():
     def __init__(self):
+        
+        self.palm_detector = PalmDetection()
+
+        self.hand_landmark_model = HandLandmark()
+        
+        """
         mp_hands = mp.solutions.hands
         
         # Hand detection model
         self.hands_model = mp_hands.Hands(min_detection_confidence=0.8, min_tracking_confidence=0.5, max_num_hands=1)
+        """
 
 
     def landmarks_from_image(self, frame: cv2.Mat) -> list[list[float]]:
@@ -20,9 +30,11 @@ class HandLandmarksDetection():
         if not landmarks:
             return None
 
+        """
         # Convert landmarks to list of dots
         landmarks = self.landmarks_to_list(landmarks.landmark)
-        
+        """
+
         # Choose points for rotation and center
         angle_rad = get_rotation_angle(landmarks[0], landmarks[2])
         center = landmarks[0]  
@@ -34,27 +46,53 @@ class HandLandmarksDetection():
         normalized_landmarks = self.normalize_position(rotated_landmarks)
 
         return normalized_landmarks
-
-
-    def hand_from_image(self, frame: cv2.Mat):
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR -> RGB
-        image = cv2.flip(image, 1)  # flip on horizontal
-        image.flags.writeable = False
-
-        # Get predicted landmarks. 
-        results = self.hands_model.process(image)
-
-        # If find hand in image save hand else None
-        hand = None if not results.multi_hand_landmarks else results.multi_hand_landmarks[0]
-
-        image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # RGB -> BGR
-
-        return hand
     
 
-    def landmarks_to_list(self, landmarks) -> list[list[float]]:
-       return [[lm.x, lm.y, lm.z] for lm in landmarks]
+    def hands_recognition(self, frame: cv2.Mat) -> list[list[float]]:
+        # Detect palm(s)
+        hands = self.palm_detector(frame)
+        if hands is None or len(hands) == 0:
+            return None
+
+        images = []
+        rects = []
+
+        h, w = frame.shape[:2]
+
+        for hand in hands:
+            sqn_rr_size, rotation, cx_norm, cy_norm = hand
+
+            cx = int(cx_norm * w)
+            cy = int(cy_norm * h)
+            size = int(sqn_rr_size * frame.shape[1])  # convert size from normalized to pixels
+
+            # Crop square region from frame
+            xmin = max(cx - size // 2, 0)
+            ymin = max(cy - size // 2, 0)
+            xmax = min(cx + size // 2, w)
+            ymax = min(cy + size // 2, h)
+
+            #print(xmin, ymin, xmax, ymax)
+            hand_crop = frame[ymin:ymax, xmin:xmax]         
+
+            if hand_crop.shape[0] == 0 or hand_crop.shape[1] == 0:
+                print("hand_crop is empty")
+                continue
+
+            images.append(hand_crop)
+            rects.append([cx, cy, size, size, rotation])
+
+        if not images:
+            return None
+
+        rects = np.array(rects, dtype=np.float32)
+
+        # Run hand landmark model
+        landmarks, sizes = self.hand_landmark_model(images, rects)
+
+        #print(sizes) # rotated_image_width, rotated_image_height, left_hand_0_or_right_hand_1]
+
+        return landmarks
 
 
     def normalize_rotation(self, landmarks: list[list[float]], angle_rad:float, center:list) -> list[list[float]]:
@@ -116,3 +154,27 @@ class HandLandmarksDetection():
         landmarks[:, 2] /= depth
 
         return landmarks.tolist()
+    
+
+
+
+"""
+    def landmarks_to_list(self, landmarks) -> list[list[float]]:
+       return [[lm.x, lm.y, lm.z] for lm in landmarks]
+
+    def hand_from_image(self, frame: cv2.Mat):
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # BGR -> RGB
+        image = cv2.flip(image, 1)  # flip on horizontal
+        image.flags.writeable = False
+
+        # Get predicted landmarks. 
+        results = self.hands_model.process(image)
+
+        # If find hand in image save hand else None
+        hand = None if not results.multi_hand_landmarks else results.multi_hand_landmarks[0]
+
+        image.flags.writeable = True
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)  # RGB -> BGR
+
+        return hand
+"""
