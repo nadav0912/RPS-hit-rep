@@ -29,7 +29,7 @@ def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_lan
     # Detect palm(s)
     hands = palm_detector(frame)
     if hands is None or len(hands) == 0:
-        return None
+        return None, [None]
 
     images = []
     rects = []
@@ -60,7 +60,7 @@ def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_lan
         rects.append([cx, cy, size, size, rotation])
 
     if not images:
-        return None
+        return None, [None]
 
     hand_sides = ["left", "right"]
 
@@ -69,7 +69,12 @@ def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_lan
     # Run hand landmark model
     landmarks, sizes = hand_landmark_model(images, rects)
 
-    return landmarks, hand_sides[sizes[-1]]
+    if len(landmarks) == 0 or len(sizes) == 0:
+        return None, [None]
+
+    #print("landmarks:", landmarks, "sizes:", int(sizes[0][2][0]))
+
+    return landmarks, hand_sides[int(sizes[0][2][0])]
 
 
 
@@ -196,6 +201,7 @@ def normalize_landmarks(landmarks: list[list[float]]) -> list[list[float]]:
     """
     
     # Normalize angle
+    print("landmarks:", len(landmarks))
     angle_rad = get_rotation_angle(wrist=landmarks[0], index_mcp=landmarks[2])
     center = landmarks[0]  # using wrist as the center of rotation
 

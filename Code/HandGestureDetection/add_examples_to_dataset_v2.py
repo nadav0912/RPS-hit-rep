@@ -21,10 +21,10 @@ key_label_dict =  {'r':"rock", 'p':"paper", 's':"scissors"}
 
 # Instance of the Models
 palm_detector = PalmDetection()
-hand_landmark_model = PalmDetection()
+hand_landmark_model = HandLandmark()
 
 # Computer camera
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 
 record_mode = False  # Is record example now
@@ -33,6 +33,8 @@ hand_side = None
 
 example_landmarks_data = []   # list of landmarks. each landmarks is list of 21 dots [[x, y, z], ...]
 example_images = []
+
+print("Processing image...")
 
 
 # -------- Main Loop -------- #
@@ -49,11 +51,11 @@ while cap.isOpened():
         for i, lm_list in enumerate(landmark):
             for lm in lm_list:
                 x, y = int(lm[0]), int(lm[1])
-                cv2.circle(image, (x, y), int(abs(lm[2])/10), (0, 255, 0), -1)
+                cv2.circle(image, (x, y), int(abs(lm[2])/4), (0, 255, 0), -1)
 
         # Add hand to example data if record mode is on
         if record_mode:
-            example_landmarks_data.append(landmark)
+            example_landmarks_data.append(landmark[0])
             example_images.append(image)
             print("....")
 

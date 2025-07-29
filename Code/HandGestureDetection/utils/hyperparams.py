@@ -4,7 +4,7 @@ from pathlib import Path
 TRAINED_MODEL = "3l_190ep_70per"
 
 # Paths
-DATASET_PATH = Path(__file__).resolve().parent.parent / "data"
+DATASET_PATH = Path(__file__).resolve().parent.parent / "data_v2"
 MODEL_PATH = Path(__file__).parent.parent / "models_state_dicts"
 
 # Maps
