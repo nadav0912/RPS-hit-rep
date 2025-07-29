@@ -4,7 +4,7 @@ from pathlib import Path
 TRAINED_MODEL = "3l_190ep_70per"
 
 # Paths
-DATASET_PATH = Path(__file__).resolve().parent.parent / "data_v2"
+DATASET_PATH = Path(__file__).resolve().parent.parent / "data_v2_front"
 MODEL_PATH = Path(__file__).parent.parent / "models_state_dicts"
 
 # Maps
@@ -25,6 +25,6 @@ OUTPUT_SIZE = 3         # Number of classes/labels
 
 TEST_SIZE = 0.3
 BATCH_SIZE = 200        # Training batch size
-EPOCHS = 190            # Training number of epocs
-LEARNING_RATE = 1e-4    # Training learning rate, currently: 10^(-3)
+EPOCHS = 190           # Training number of epocs
+LEARNING_RATE = 1e-3    # Training learning rate, currently: 10^(-3)
 RANDOM_SEED = 142        # Training number seed

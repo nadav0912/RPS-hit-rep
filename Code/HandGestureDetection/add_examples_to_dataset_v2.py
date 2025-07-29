@@ -24,7 +24,7 @@ palm_detector = PalmDetection()
 hand_landmark_model = HandLandmark()
 
 # Computer camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 
 record_mode = False  # Is record example now
@@ -74,7 +74,8 @@ while cap.isOpened():
                 print("Stop record example!")
 
                 #need_to_save = show_record_example(example_images, example_landmarks_data, live_wrapper)
-                add_example_to_dataset(label, hand_side, example_landmarks_data)
+                if input("Save example? (y/n): ").lower() != 'n':
+                    add_example_to_dataset(label, hand_side, example_landmarks_data)
 
                 record_mode = False
                 label = None
