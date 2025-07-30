@@ -6,8 +6,14 @@ import math
 import onnx
 import onnxruntime as ort
 from pathlib import Path
+<<<<<<< HEAD
 from .hyperparams import MODEL_PATH, NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, ONNX_PATH
 
+=======
+from .hyperparams import MODEL_PATH
+from landmark_hand_models.hand_landmark.hand_landmark import HandLandmark
+from landmark_hand_models.palm_detection.palm_detection import PalmDetection
+>>>>>>> mainCode
 
 class LiveGRUWrapper:
     def __init__(self, model):
@@ -25,6 +31,7 @@ class LiveGRUWrapper:
         return output
 
 
+<<<<<<< HEAD
 class LiveONNXGRUWrapper:
     def __init__(self, onnx_path):
         self.session = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
@@ -70,6 +77,60 @@ def export_torch_to_ONNX(model: torch.nn.Module, model_name: str):
     onnx.checker.check_model(ONNX_FILE)    # raises if anything is wrong
     print("exported to", ONNX_FILE)
 
+=======
+def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_landmark_model: HandLandmark):
+    # Detect palm(s)
+    hands = palm_detector(frame)
+    if hands is None or len(hands) == 0:
+        return None, [None]
+
+    images = []
+    rects = []
+
+    h, w = frame.shape[:2]
+
+    for hand in hands:
+        sqn_rr_size, rotation, cx_norm, cy_norm = hand
+
+        cx = int(cx_norm * w)
+        cy = int(cy_norm * h)
+        size = int(sqn_rr_size * frame.shape[1])  # convert size from normalized to pixels
+
+        # Crop square region from frame
+        xmin = max(cx - size // 2, 0)
+        ymin = max(cy - size // 2, 0)
+        xmax = min(cx + size // 2, w)
+        ymax = min(cy + size // 2, h)
+
+        #print(xmin, ymin, xmax, ymax)
+        hand_crop = frame[ymin:ymax, xmin:xmax]         
+
+        if hand_crop.shape[0] == 0 or hand_crop.shape[1] == 0:
+            print("hand_crop is empty")
+            continue
+
+        images.append(hand_crop)
+        rects.append([cx, cy, size, size, rotation])
+
+    if not images:
+        return None, [None]
+
+    hand_sides = ["left", "right"]
+
+    rects = np.array(rects, dtype=np.float32)
+
+    # Run hand landmark model
+    landmarks, sizes = hand_landmark_model(images, rects)
+
+    if len(landmarks) == 0 or len(sizes) == 0:
+        return None, [None]
+
+    #print("landmarks:", landmarks, "sizes:", int(sizes[0][2][0]))
+
+    return landmarks, hand_sides[int(sizes[0][2][0])]
+
+
+>>>>>>> mainCode
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):
     """
@@ -194,6 +255,7 @@ def normalize_landmarks(landmarks: list[list[float]]) -> list[list[float]]:
     """
     
     # Normalize angle
+    print("landmarks:", len(landmarks))
     angle_rad = get_rotation_angle(wrist=landmarks[0], index_mcp=landmarks[2])
     center = landmarks[0]  # using wrist as the center of rotation
 
