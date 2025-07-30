@@ -49,6 +49,7 @@ class LiveONNXGRUWrapper:
 def export_torch_to_ONNX(model: torch.nn.Module, model_name: str):
     ONNX_FILE = ONNX_PATH / (model_name + ".onnx")
 
+    model.to(device='cpu')  
     load_model(model, model_name=model_name)
     model.eval()
 
@@ -314,8 +315,8 @@ def MSS(landmarks1: list[list[float]], landmarks2: list[list[float]]) -> float:
 
 def save_model(model: torch.nn.Module, model_name: str):
     MODEL_PATH.mkdir(parents=True, exist_ok=True) 
-    model_name += '.pth'
-    MODEL_SAVE_PATH = MODEL_PATH / model_name
+    model_name_pth = model_name + '.pth'
+    MODEL_SAVE_PATH = MODEL_PATH / model_name_pth
     print(f"Saving model to: {MODEL_SAVE_PATH}")
     torch.save(obj=model.state_dict(), f=MODEL_SAVE_PATH)
     export_torch_to_ONNX(model=model, model_name=model_name)
