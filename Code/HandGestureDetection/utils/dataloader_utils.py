@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from .hyperparams import LABEL_MAP, DATASET_PATH
+from .hyperparams import LABEL_MAP, DATASET_PATH, FRAME_PERCENTAGE
 
 
 # Dataset class, used for dataloader
@@ -32,7 +32,7 @@ class handDataset(Dataset):
     def csvToTensor(self, csv_file):
 
         df = pd.read_csv(csv_file)  # size of (num_of_rows, 66)
-        percent = 0.7
+        percent = FRAME_PERCENTAGE  # percent of frames to use from each example
         df = df.iloc[:int(len(df)*percent)]
         print(f"this is without the last {percent}% of each example")
         df = df.sort_values(by='id')

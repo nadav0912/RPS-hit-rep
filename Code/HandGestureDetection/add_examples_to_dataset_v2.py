@@ -18,6 +18,19 @@ from landmark_hand_models.palm_detection.palm_detection import PalmDetection
 # Labels dict
 key_label_dict =  {'r':"rock", 'p':"paper", 's':"scissors"}
 
+# Get model for show preds on each new example
+model = GRUModelV1(
+        input_size=INPUT_SIZE,
+        hidden_size=HIDDEN_SIZE,
+        num_layers=NUM_LAYERS,
+        num_classes=OUTPUT_SIZE,
+        dropout_prob=0.3
+)
+
+load_model(model, model_name=TRAINED_MODEL)
+live_wrapper = LiveGRUWrapper(model)
+
+
 
 # Instance of the Models
 palm_detector = PalmDetection()
@@ -73,8 +86,8 @@ while cap.isOpened():
             else:
                 print("Stop record example!")
 
-                #need_to_save = show_record_example(example_images, example_landmarks_data, live_wrapper)
-                if input("Save example? (y/n): ").lower() != 'n':
+                need_to_save = show_record_example(example_images, example_landmarks_data, live_wrapper)
+                if need_to_save:
                     add_example_to_dataset(label, hand_side, example_landmarks_data)
 
                 record_mode = False

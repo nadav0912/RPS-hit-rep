@@ -13,7 +13,13 @@ class GRUModelV1(nn.Module):
             dropout=dropout_prob,
         )
         
-        self.fc = nn.Linear(hidden_size, num_classes)
+
+        self.linear_layers = nn.Sequential(
+            nn.Linear(hidden_size, hidden_size // 2),
+            nn.ReLU(),
+            nn.Dropout(dropout_prob),
+            nn.Linear(hidden_size // 2, num_classes)
+        )
 
 
     def forward(self, x,  h_n=None):
@@ -23,5 +29,5 @@ class GRUModelV1(nn.Module):
         # Take output from the last time step
         last_time_step = out[:, -1, :]  # shape: (batch, hidden_size)
         
-        out = self.fc(last_time_step)  # shape: (batch, num_classes)
+        out = self.linear_layers(last_time_step)  # shape: (batch, num_classes)
         return out, h_n
