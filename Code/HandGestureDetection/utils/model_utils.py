@@ -6,14 +6,10 @@ import math
 import onnx
 import onnxruntime as ort
 from pathlib import Path
-<<<<<<< HEAD
 from .hyperparams import MODEL_PATH, NUM_LAYERS, HIDDEN_SIZE, INPUT_SIZE, ONNX_PATH
 
-=======
-from .hyperparams import MODEL_PATH
 from landmark_hand_models.hand_landmark.hand_landmark import HandLandmark
 from landmark_hand_models.palm_detection.palm_detection import PalmDetection
->>>>>>> mainCode
 
 class LiveGRUWrapper:
     def __init__(self, model):
@@ -31,7 +27,6 @@ class LiveGRUWrapper:
         return output
 
 
-<<<<<<< HEAD
 class LiveONNXGRUWrapper:
     def __init__(self, onnx_path):
         self.session = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
@@ -77,7 +72,6 @@ def export_torch_to_ONNX(model: torch.nn.Module, model_name: str):
     onnx.checker.check_model(ONNX_FILE)    # raises if anything is wrong
     print("exported to", ONNX_FILE)
 
-=======
 def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_landmark_model: HandLandmark):
     # Detect palm(s)
     hands = palm_detector(frame)
@@ -128,9 +122,6 @@ def hand_from_image_v2(frame: np.ndarray, palm_detector: PalmDetection, hand_lan
     #print("landmarks:", landmarks, "sizes:", int(sizes[0][2][0]))
 
     return landmarks, hand_sides[int(sizes[0][2][0])]
-
-
->>>>>>> mainCode
 
 def hand_from_image(success: bool, frame: np.ndarray, hands_model: mp.solutions.hands.Hands):
     """
