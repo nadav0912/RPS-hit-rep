@@ -6,6 +6,9 @@ from adafruit_pca9685 import PCA9685
 from adafruit_motor import servo
 from board import SCL, SDA
 
+HOST = ''         # Listen on all interfaces
+PORT = 8000      # Choose any unused port
+
 # Create I2C bus
 i2c = busio.I2C(SCL, SDA)
 
@@ -62,49 +65,45 @@ class BionicHandControl():
     def ledOff(self):
         GPIO.output(18, GPIO.LOW)
 
+    def zain(self):
+        self.servos[2].angle = self.open_angle[2] + 10
+        
+        self.servos[0].angle = self.close_angle[0]
+        self.servos[1].angle = self.close_angle[1]
+        self.servos[3].angle = self.close_angle[3]
+        self.servos[4].angle = self.close_angle[4]
+
 
 if __name__ == "__main__":
-    import socket
-
-    HOST = ''         # Listen on all interfaces
-    PORT = 8000      # Choose any unused port
-
     hand = BionicHandControl()      # Robotic hand class
 
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # Create socket
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)    # Create UDP socket
     sock.bind((HOST, PORT))                                     # Binds the socket to your IP and port
-    sock.listen(1)                                              # Listen mode, accepts 1 client at a time
+    print(f"UDP Listening on port {PORT}...")
 
-    with sock:
-        print(f"Listening on port {PORT}...")
-        conn, addr = sock.accept()          # conn - The connection socket, addr - (IP, port) of the connected client
+    while True:
 
-        with conn:
+        # Recieve command
+        data, addr = sock.recvfrom(1024)  # Receive from any client
+        command = data.decode().strip()
+        print(f"Received: {data}")
+        
+        # Command handling
+        if data == "Zain":
+            hand.zain()
+        if data == "rock":
+            hand.rock()
+        elif data == "paper":
+            hand.paper()
+        elif data == "scissors":
+            hand.scissors()
+        elif data == "ledOn":
+            hand.ledOn()
+        elif data == "ledOff":
+            hand.ledOff()
+        elif data == "quit":
+            break
+        else:
+            print("Unknown command")
 
-            print(f"Connected by {addr}")
-
-            while True:
-
-                # Recieve command
-                data = conn.recv(1024).decode().strip()
-                if not data:
-                    break
-                print(f"Received: {data}")
-                
-                # Command handling
-                if data == "rock":
-                    hand.rock()
-                elif data == "paper":
-                    hand.paper()
-                elif data == "scissors":
-                    hand.scissors()
-                elif data == "ledOn":
-                    hand.ledOn()
-                elif data == "ledOff":
-                    hand.ledOff()
-                elif data == "quit":
-                    break
-                else:
-                    print("Unknown command")
-
-        print("Connection closed")
+print("Connection closed")
