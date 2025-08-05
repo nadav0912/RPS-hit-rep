@@ -2,7 +2,7 @@ import torch
 from torch import nn
 
 class staticGestureModelV1(nn.Module):
-    def __init__(self, input_features, output_features, hidden_units=64, dropout_prob=0.5):
+    def __init__(self, input_features, output_features, hidden_units=64, dropout_prob=0.3):
         super().__init__()
 
         self.layers_stack = nn.Sequential(
