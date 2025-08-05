@@ -25,9 +25,11 @@ class HandLandmarksDetection():
 
     def landmarks_from_image(self, frame: cv2.Mat) -> list[list[float]]:
         # get landmarks from image
-        landmarks = self.hand_from_image(frame)
+        landmarks = self.hands_recognition(frame)[0]
 
-        if not landmarks:
+        print(f"Landmarks: {landmarks}")
+
+        if len(landmarks) != 21:
             return None
 
         """
@@ -90,6 +92,8 @@ class HandLandmarksDetection():
         # Run hand landmark model
         landmarks, sizes = self.hand_landmark_model(images, rects)
 
+        if len(landmarks) == 0 or len(sizes) == 0:
+            return None
         #print(sizes) # rotated_image_width, rotated_image_height, left_hand_0_or_right_hand_1]
 
         return landmarks

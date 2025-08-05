@@ -8,13 +8,13 @@ import cv2
 import onnxruntime
 import numpy as np
 
-from utils.utils import keep_aspect_resize_and_pad
+from ..utils.utils import keep_aspect_resize_and_pad
 
 
 class HandLandmark(object):
     def __init__(
         self,
-        model_path: Optional[str] = 'model/hand_landmark/hand_landmark_sparse_Nx3x224x224.onnx',
+        model_path: Optional[str] = "Code/final_models/hand_landmark/hand_landmark_sparse_Nx3x224x224.onnx",
         class_score_th: Optional[float] = 0.20,
         providers: Optional[List] = [
             # (

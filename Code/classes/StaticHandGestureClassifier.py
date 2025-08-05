@@ -10,7 +10,7 @@ class StaticHandGestureClassifier():
         self.model.load_state_dict(torch.load(model_parameters_path))
         self.model.eval()
 
-        self.labels = ['rock', 'paper', 'scissors', 'other']
+        self.labels = ['rock', 'paper', 'scissors']
 
     def predict(self, landmarks: list[list[float]]) -> str:
         tensor = landmarks_to_tensor(landmarks).squeeze(0)  # Convert landmarks to tensor (1, 63)

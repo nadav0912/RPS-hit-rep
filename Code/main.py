@@ -2,7 +2,7 @@
 # Libraries
 import cv2 
 import time
-
+import torch
 
 # Importing main classes
 from classes.BionicHandControl import BionicHandControlTest
@@ -12,15 +12,15 @@ from classes.GRUGestureClassifier import GRUGestureClassifier
 
 from utils import *
 from main_hyperparmeters import *
-from Code.final_models.GRU.GRU_model import GRUModelV1
-from final_models.static_gesture_classifier_model import staticGestureModelV1
+from final_models.GRU.GRU_model import GRUModelV1
+from final_models.static_gesture_classifier.static_gesture_classifier_model import staticGestureModelV1
 
 
 
 # -------------------- INITIALIZATION -------------------- #
 bionicHandControl = BionicHandControlTest()
 handLandmarksDetection = HandLandmarksDetection()
-staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
+#staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
 GRUgestureClassifier = GRUGestureClassifier(model=GRUModelV1, model_parameters_path=GRU_MODEL_PATH)
 
 camera = connect_camera()  # Connected to defult camera
@@ -60,10 +60,13 @@ def active_state(image: cv2.Mat):
     landmarks = handLandmarksDetection.landmarks_from_image(frame=image)
 
     if landmarks:
+        
         frame_counter += 1
 
         # Pass through GRU model
         gesture, prob = GRUgestureClassifier.predict(landmarks)
+
+        print(f"GRU model predicted gesture: {gesture}, with probability: {prob}, frame: {frame_counter}")
 
         # Check stop condition
         if prob > DETECTION_PROB_TRESHOLD and frame_counter > DETECTION_FRAME_TRESHOLD:
@@ -72,6 +75,7 @@ def active_state(image: cv2.Mat):
             GRUgestureClassifier.reset() # Reset previous information in GRU model 
             frame_counter = 0
             game_status = "result"
+            print("Move to result state...")
 
             print(f"GRU model predicted gesture: {gesture}, with probability: {prob}")
 
@@ -85,7 +89,7 @@ def result_state():
     if landmarks:
         time.sleep(1)
         # Predict gesture using the classifier
-        gesture = staticHandGestureClassifier.predict(landmarks)
+        gesture = "rock" #staticHandGestureClassifier.predict(landmarks)
     
         print(f"static geture model predicted: {gesture}, bionic hand do: {bionic_hand_gesture}")
         print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")
@@ -128,7 +132,6 @@ while camera.isOpened():
     # Show image
     cv2.imshow("Hand Detection", image)
 
-    print("game state:",game_status)
 
 
 camera.release()  # Release the camera resource.

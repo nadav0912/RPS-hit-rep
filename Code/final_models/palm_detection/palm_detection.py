@@ -13,7 +13,7 @@ from math import (
 import onnxruntime
 import numpy as np
 
-from utils.utils import (
+from ..utils.utils import (
     normalize_radians,
     keep_aspect_resize_and_pad,
 )
@@ -22,7 +22,8 @@ from utils.utils import (
 class PalmDetection(object):
     def __init__(
         self,
-        model_path: Optional[str] = 'model/palm_detection/palm_detection_full_inf_post_192x192.onnx',
+        model_path: Optional[str] = "Code/final_models/palm_detection/palm_detection_full_inf_post_192x192.onnx"
+,
         score_threshold: Optional[float] = 0.60,
         providers: Optional[List] = [
             # (
