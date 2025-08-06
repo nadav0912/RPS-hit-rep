@@ -73,7 +73,7 @@ print("MODEL:\n", model)
 # ---------- LOSS & OPTIMIZER ---------- #
 loss_fn = nn.CrossEntropyLoss()
 
-accuracy_fn = Accuracy(task="multiclass", num_classes=NUM_CLASSES)
+accuracy_fn = Accuracy(task="multiclass", num_classes=NUM_CLASSES).to(device)
 confmat_fn = ConfusionMatrix(task="multiclass", num_classes=NUM_CLASSES)
 
 optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
@@ -117,6 +117,8 @@ with torch.inference_mode():
     y_logits = model(X_test)
     y_preds = torch.softmax(y_logits, dim=1).argmax(dim=1)
 
+
+y_test, y_preds = y_test.to('cpu'), y_preds.to('cpu')
 
 report = classification_report(y_true=y_test, y_pred=y_preds)
 print(report)
