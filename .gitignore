@@ -8,3 +8,4 @@ myenv/
 *.py[cod]
 python-3.12.0-amd64.exe
 Code/HandGestureDetection/data_v2_front/
+.vscode/

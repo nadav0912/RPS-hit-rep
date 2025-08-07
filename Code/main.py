@@ -5,7 +5,7 @@ import time
 import torch
 
 # Importing main classes
-from classes.BionicHandControl import BionicHandControlTest
+from Code.classes.RaspberryMessage import RaspberryMessage
 from classes.HandLandmarksDetection import HandLandmarksDetection
 from classes.StaticHandGestureClassifier import StaticHandGestureClassifier
 from classes.GRUGestureClassifier import GRUGestureClassifier
@@ -18,7 +18,7 @@ from final_models.static_gesture_classifier.static_gesture_classifier_model impo
 
 
 # -------------------- INITIALIZATION -------------------- #
-bionicHandControl = BionicHandControlTest()
+PiMessage = RaspberryMessage()
 handLandmarksDetection = HandLandmarksDetection()
 #staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
 GRUgestureClassifier = GRUGestureClassifier(model=GRUModelV1, model_parameters_path=GRU_MODEL_PATH)
@@ -41,13 +41,13 @@ def idle_state(key: str):
     global game_status
 
     if key == 's':
-        bionicHandControl.ledOn()
+        PiMessage.ledOn()
 
         for _ in range(2):
             time.sleep(1) 
-            bionicHandControl.ledOff()
+            PiMessage.ledOff()
             time.sleep(1) 
-            bionicHandControl.ledOn()
+            PiMessage.ledOn()
 
         game_status = "active"
         print("Active state: Hand detection and Move prediction in progress...")
@@ -71,7 +71,7 @@ def active_state(image: cv2.Mat):
         # Check stop condition
         if prob > DETECTION_PROB_TRESHOLD and frame_counter > DETECTION_FRAME_TRESHOLD:
             bionic_hand_gesture = counterGesture(gesture) # Save bionic hand gesture
-            bionicHandControl.move(bionic_hand_gesture) # Tell bionic hand to make counter move
+            PiMessage.message(bionic_hand_gesture) # Tell bionic hand to make counter move
             GRUgestureClassifier.reset() # Reset previous information in GRU model 
             frame_counter = 0
             game_status = "result"
@@ -94,8 +94,8 @@ def result_state():
         print(f"static geture model predicted: {gesture}, bionic hand do: {bionic_hand_gesture}")
         print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")
         
-        bionicHandControl.ledOff()
-        bionicHandControl.move("idle")
+        PiMessage.ledOff()
+        PiMessage.idle()
 
         game_status = "idle"
         print("Press 's' to start a new game...")
@@ -108,7 +108,7 @@ def result_state():
 print("Once the game starts, wait for the third blink of the led and make your move!")
 print("Press 'q' stop the program completely...")
 print("Press 's' to start a new game...")
-bionicHandControl.move("idle")  # Initial move to start the game
+PiMessage.idle()  # Initial move to start the game
 
 while camera.isOpened():
     success, image = camera.read()
