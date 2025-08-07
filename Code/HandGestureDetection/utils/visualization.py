@@ -82,7 +82,7 @@ def draw_label_on_image(landmarks, image, label_text):
     return image
 
 
-def show_record_example(example_images: list[list[int]], example_landmarks: list[list[list[int]]], live_wrapper: LiveGRUWrapper) -> bool:
+def show_record_example(example_images: list[list[int]], example_landmarks: list[list[list[float]]], live_wrapper: LiveGRUWrapper) -> bool:
     """
     Display a sequence of example images with predicted labels, allowing the user to confirm or discard the example.
     

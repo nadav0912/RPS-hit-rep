@@ -28,9 +28,8 @@ class GRUGestureClassifier():
         # Get logits and Probabilities
         logits = self.live_wrapper.step(tensor)
         logits = torch.tensor(logits, dtype=torch.float32)
-        print(logits)
         probs = torch.softmax(logits.squeeze(), dim=0)
-
+        print(probs)
         label_idx = probs.argmax().item()
 
         return LABEL_LIST[label_idx], probs.max().item()

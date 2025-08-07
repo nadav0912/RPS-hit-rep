@@ -4,9 +4,10 @@ import cv2
 import pandas as pd
 import sys
 import os
+from pathlib import Path
 
 
-from utils import LiveGRUWrapper
+from utils import LiveONNXGRUWrapper #LiveGRUWrapper
 from Gesture_detection_model import GRUModelV1
 from utils import hand_from_image_v2, add_example_to_dataset, load_model, show_record_example, check_key_press
 from utils import INPUT_SIZE, HIDDEN_SIZE, NUM_LAYERS, OUTPUT_SIZE, TRAINED_MODEL
@@ -28,7 +29,7 @@ model = GRUModelV1(
 )
 
 load_model(model, model_name=TRAINED_MODEL)
-live_wrapper = LiveGRUWrapper(model)
+live_wrapper = LiveONNXGRUWrapper("Code/HandGestureDetection/models_state_compiled/front_hand_jap_v3.onnx")  # (model)
 
 
 

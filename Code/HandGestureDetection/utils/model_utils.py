@@ -295,7 +295,8 @@ def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list
 
     for frame in example:
         logits = live_wrapper.step(frame.unsqueeze(dim=0).unsqueeze(dim=0))
-        probs = torch.softmax(logits.squeeze(), dim=0).tolist()
+        #probs = torch.softmax(logits.squeeze(), dim=0).tolist()
+        probs = torch.softmax(torch.tensor(logits).squeeze(), dim=0).tolist()
         probs_list.append(probs)
 
     return probs_list

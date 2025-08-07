@@ -5,7 +5,7 @@ import time
 import torch
 
 # Importing main classes
-from Code.classes.RaspberryMessage import RaspberryMessage
+from classes.RaspberryMessage import RaspberryMessage
 from classes.HandLandmarksDetection import HandLandmarksDetection
 from classes.StaticHandGestureClassifier import StaticHandGestureClassifier
 from classes.GRUGestureClassifier import GRUGestureClassifier
@@ -20,10 +20,10 @@ from final_models.static_gesture_classifier.static_gesture_classifier_model impo
 # -------------------- INITIALIZATION -------------------- #
 PiMessage = RaspberryMessage()
 handLandmarksDetection = HandLandmarksDetection()
-#staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
+staticHandGestureClassifier = StaticHandGestureClassifier(model=staticGestureModelV1, model_parameters_path=STATIC_GESTURE_MODEL_PATH)
 GRUgestureClassifier = GRUGestureClassifier(model=GRUModelV1, model_parameters_path=GRU_MODEL_PATH)
 
-camera = connect_camera()  # Connected to defult camera
+camera = connect_camera(1)  # Connected to defult camera
 
 game_status = "idle"  # Game state: 
                       # "idle"   - waiting to start,
@@ -89,12 +89,13 @@ def result_state():
     if landmarks:
         time.sleep(1)
         # Predict gesture using the classifier
-        gesture = "rock" #staticHandGestureClassifier.predict(landmarks)
+        gesture = staticHandGestureClassifier.predict(landmarks)
     
         print(f"static geture model predicted: {gesture}, bionic hand do: {bionic_hand_gesture}")
         print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")
         
         PiMessage.ledOff()
+        time.sleep(2)
         PiMessage.idle()
 
         game_status = "idle"

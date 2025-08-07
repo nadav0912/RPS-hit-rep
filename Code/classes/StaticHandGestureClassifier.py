@@ -6,7 +6,7 @@ from main_hyperparmeters import NUM_CLASSES, NUM_FEATURES
 class StaticHandGestureClassifier():
     def __init__(self, model: torch.nn.Module, model_parameters_path: Path):
         # instantiate the model
-        self.model = model(input_features=NUM_FEATURES, output_features=NUM_CLASSES)
+        self.model = model(input_features=NUM_FEATURES, output_features=NUM_CLASSES+1)
         self.model.load_state_dict(torch.load(model_parameters_path))
         self.model.eval()
 
