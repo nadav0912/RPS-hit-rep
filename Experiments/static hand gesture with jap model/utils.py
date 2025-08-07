@@ -198,3 +198,5 @@ def normalize_landmarks(landmarks: list[list[float]]) -> list[list[float]]:
     print(math.degrees(new_angle))  # Should be close to 0"""
 
     return normalized_landmarks
+
+

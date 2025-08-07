@@ -18,7 +18,7 @@ dataset_path = "hand-dataset.csv"
 key_label_dict =  {'r':"rock", 'p':"paper", 's':"scissors", 'o': "other"}
 
 # Computer camera
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 # Instance of the Models
 palm_detector = PalmDetection()
