@@ -58,7 +58,15 @@ class LiveGRUWrapper:
 
 class LiveONNXGRUWrapper:
     def __init__(self, onnx_path):
-        self.session = ort.InferenceSession(onnx_path, providers=["CPUExecutionProvider"])
+        self.session = ort.InferenceSession(onnx_path, providers=["CUDAExecutionProvider"])
+        
+        # Check if the model is running on GPU or CPU
+        if 'CUDAExecutionProvider' in self.session.get_providers():
+            print("[INFO] GRU model is running on: CUDA (GPU) ✅")
+        else:
+            print("[WARNING] GRU model is running on: CPU ❌")
+
+        
         self.h_n = None
         self.reset()
 

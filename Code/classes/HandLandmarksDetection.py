@@ -25,17 +25,14 @@ class HandLandmarksDetection():
 
     def landmarks_from_image(self, frame: cv2.Mat) -> list[list[float]]:
         # get landmarks from image
-        landmarks = self.hands_recognition(frame)[0]
+        landmarks = self.hands_recognition(frame)
 
         print(f"Landmarks: {landmarks}")
 
-        if len(landmarks) != 21:
+        if not landmarks or len(landmarks[0]) != 21:
             return None
 
-        """
-        # Convert landmarks to list of dots
-        landmarks = self.landmarks_to_list(landmarks.landmark)
-        """
+        landmarks = landmarks[0]  # take only first hand landmarks
 
         # Choose points for rotation and center
         angle_rad = get_rotation_angle(landmarks[0], landmarks[2])

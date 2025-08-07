@@ -75,6 +75,12 @@ class PalmDetection(object):
         )
         self.providers = self.onnx_session.get_providers()
 
+        # Check if the model is running on GPU or CPU
+        if 'CUDAExecutionProvider' in self.providers:
+            print("[INFO] PalmDetection model is running on: CUDA (GPU) ✅")
+        else:
+            print("[WARNING] PalmDetection model is running on: CPU ❌")
+
         self.input_shapes = [
             input.shape for input in self.onnx_session.get_inputs()
         ]

@@ -2,10 +2,10 @@ import cv2
 import math
 import torch
 
-def connect_camera():
+def connect_camera(camera_index: int = 0) -> cv2.VideoCapture:
     """Connect to the camera and return the VideoCapture object."""
     
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(camera_index)
     if not cap.isOpened():
         print("Error: Could not open video.")
         exit()
