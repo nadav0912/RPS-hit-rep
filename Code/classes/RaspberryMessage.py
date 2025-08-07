@@ -17,8 +17,8 @@ class RaspberryMessage():
     def scissors(self) -> None:
         self.message('scissors')
     
-    def wait(self) -> None:
-        self.message('wait')
+    def idle(self) -> None:
+        self.message('idle')
         
     def ledOn(self) -> None:
         self.message('ledOn')

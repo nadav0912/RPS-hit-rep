@@ -46,7 +46,7 @@ class BionicHandControl():
         self.servos[3].angle = self.close_angle[3]
         self.servos[4].angle = self.close_angle[4]
     
-    def wait(self):
+    def idle(self):
         for i in range(5):
           self.servos[i].angle = self.close_angle[i]
         
@@ -87,8 +87,8 @@ if __name__ == "__main__":
             hand.paper()
         elif command == "scissors":
             hand.scissors()
-        elif command == "wait":
-            hand.wait()
+        elif command == "idle":
+            hand.idle()
         elif command == "ledOn":
             hand.ledOn()
         elif command == "ledOff":
