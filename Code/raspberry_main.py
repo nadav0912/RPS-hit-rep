@@ -9,17 +9,6 @@ from board import SCL, SDA
 HOST = ''         # Listen on all interfaces
 PORT = 8000      # Choose any unused port
 
-# Create I2C bus
-i2c = busio.I2C(SCL, SDA)
-
-# Create PCA9685 object
-pca = PCA9685(i2c)
-pca.frequency = 50  # Typical servo frequency
-
-# Create servo objects on channels 0 to 4
-servos = [servo.Servo(pca.channels[i]) for i in range(5)]
-
-
 class BionicHandControl():
     def __init__(self):
         # Create I2C bus
@@ -30,7 +19,7 @@ class BionicHandControl():
         self.pca.frequency = 50  # Typical servo frequency
         
         # Create servo objects on channels 0 to 4
-        self.servos = [servo.Servo(pca.channels[i]) for i in range(5)]
+        self.servos = [servo.Servo(self.pca.channels[i]) for i in range(5)]      # type: ignore
         
         self.open_angle = [180, 120, 113, 120, 123]
         self.close_angle = [55, 55, 55, 55, 45]
@@ -38,7 +27,6 @@ class BionicHandControl():
         # Led
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(18, GPIO.OUT)
-         
 
         
     def rock(self):
@@ -57,7 +45,10 @@ class BionicHandControl():
         self.servos[0].angle = self.close_angle[0]
         self.servos[3].angle = self.close_angle[3]
         self.servos[4].angle = self.close_angle[4]
-        
+    
+    def wait(self):
+        for i in range(5):
+          self.servos[i].angle = self.close_angle[i]
         
     def ledOn(self):
         GPIO.output(18, GPIO.HIGH)
@@ -85,25 +76,27 @@ if __name__ == "__main__":
 
         # Recieve command
         data, addr = sock.recvfrom(1024)  # Receive from any client
-        command = data.decode().strip()
+        command = data.decode().strip().lower()
         print(f"Received: {data}")
         
-        # Command handling
-        if data == "Zain":
+        if command == "Zain":
             hand.zain()
-        if data == "rock":
+        elif command == "rock":
             hand.rock()
-        elif data == "paper":
+        elif command == "paper":
             hand.paper()
-        elif data == "scissors":
+        elif command == "scissors":
             hand.scissors()
-        elif data == "ledOn":
+        elif command == "wait":
+            hand.wait()
+        elif command == "ledOn":
             hand.ledOn()
-        elif data == "ledOff":
+        elif command == "ledOff":
             hand.ledOff()
-        elif data == "quit":
+        elif command == "quit":
             break
         else:
             print("Unknown command")
 
+GPIO.cleanup()
 print("Connection closed")
