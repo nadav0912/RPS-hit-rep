@@ -199,13 +199,13 @@ def normalize_position(landmarks: list[list[float]]) -> list[list[float]]:
     return landmarks.tolist()
 
 
-def get_rotation_angle(wrist: list, index_mcp: list) -> float:
+def get_rotation_angle(wrist: list, thumb_mcp: list) -> float:
     """
     Calculate the angle (in radians) between the wrist and the index MCP joint (מפרק היד לתחילת הזרת).
     The angle is measured in the XY plane using atan2(dy, dx).
     """
-    dx = index_mcp[0] - wrist[0]
-    dy = index_mcp[1] - wrist[1]
+    dx = thumb_mcp[0] - wrist[0]
+    dy = thumb_mcp[1] - wrist[1]
     angle = math.atan2(dy, dx)  # returns the angle in radians
     #print((angle * 180) / math.pi)
     return angle
