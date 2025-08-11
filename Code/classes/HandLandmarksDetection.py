@@ -27,8 +27,6 @@ class HandLandmarksDetection():
         # get landmarks from image
         landmarks = self.hands_recognition(frame)
 
-        print(f"Landmarks: {landmarks}")
-
         if not landmarks or len(landmarks[0]) != 21:
             return None
 

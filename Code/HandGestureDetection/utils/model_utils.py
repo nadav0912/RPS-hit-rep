@@ -199,13 +199,13 @@ def normalize_position(landmarks: list[list[float]]) -> list[list[float]]:
     return landmarks.tolist()
 
 
-def get_rotation_angle(wrist: list, index_mcp: list) -> float:
+def get_rotation_angle(wrist: list, thumb_mcp: list) -> float:
     """
     Calculate the angle (in radians) between the wrist and the index MCP joint (מפרק היד לתחילת הזרת).
     The angle is measured in the XY plane using atan2(dy, dx).
     """
-    dx = index_mcp[0] - wrist[0]
-    dy = index_mcp[1] - wrist[1]
+    dx = thumb_mcp[0] - wrist[0]
+    dy = thumb_mcp[1] - wrist[1]
     angle = math.atan2(dy, dx)  # returns the angle in radians
     #print((angle * 180) / math.pi)
     return angle
@@ -295,7 +295,8 @@ def get_label_list_from_example(live_wrapper: LiveGRUWrapper, example: list[list
 
     for frame in example:
         logits = live_wrapper.step(frame.unsqueeze(dim=0).unsqueeze(dim=0))
-        probs = torch.softmax(logits.squeeze(), dim=0).tolist()
+        #probs = torch.softmax(logits.squeeze(), dim=0).tolist()
+        probs = torch.softmax(torch.tensor(logits).squeeze(), dim=0).tolist()
         probs_list.append(probs)
 
     return probs_list

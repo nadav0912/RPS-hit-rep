@@ -67,13 +67,13 @@ def landmarks_to_tensor(landmarks: list[list[float]]) -> torch.tensor:
     return batch
 
 
-def get_rotation_angle(p1: list, p2: list) -> float:
+def get_rotation_angle(wrist: list, thumb_mcp: list) -> float:
     """
     Calculate the angle (in radians) between two points.
     The angle is measured in the XY plane using atan2(dy, dx).
     """
-    dx = p1[0] - p2[0]
-    dy = p1[1] - p2[1]
+    dx = thumb_mcp[0] - wrist[0]
+    dy = thumb_mcp[1] - wrist[1]
     angle = math.atan2(dy, dx)  # returns the angle in radians
     #print((angle * 180) / math.pi)
     return angle
