@@ -48,7 +48,7 @@ class BionicHandControl():
     
     def idle(self):
         for i in range(5):
-          self.servos[i].angle = self.close_angle[i]
+          self.servos[i].angle = self.close_angle[i] + 40
         
     def ledOn(self):
         GPIO.output(18, GPIO.HIGH)
@@ -89,9 +89,9 @@ if __name__ == "__main__":
             hand.scissors()
         elif command == "idle":
             hand.idle()
-        elif command == "ledOn":
+        elif command == "ledon":
             hand.ledOn()
-        elif command == "ledOff":
+        elif command == "ledoff":
             hand.ledOff()
         elif command == "quit":
             break

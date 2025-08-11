@@ -92,7 +92,7 @@ def result_state():
         gesture = "rock" #staticHandGestureClassifier.predict(landmarks)
     
         print(f"static geture model predicted: {gesture}, bionic hand do: {bionic_hand_gesture}")
-        print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")
+        print(f"Result: {check_robot_win(gesture, bionic_hand_gesture)}")   # type: ignore
         
         PiMessage.ledOff()
         PiMessage.idle()
